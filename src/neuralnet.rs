@@ -41,7 +41,6 @@ impl Neuralnet {
 		}
 	}
 
-
 	pub fn init_biases(&mut self)
 	{
 		let mut rng = rand::thread_rng();
@@ -118,7 +117,11 @@ impl Neuralnet {
 		self.neurons[self.layers.len() - 1].clone()
 	}
 
+	
 
 
+
+
+	
 
 }
