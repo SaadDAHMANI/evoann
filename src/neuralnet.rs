@@ -1,15 +1,17 @@
 use rand::Rng;
 
+
 pub struct Neuralnet {
-	pub neurons:Vec<Vec<f32>>,
-	pub weights:Vec<Vec<Vec<f32>>>,
-	pub biases:Vec<Vec<f32>>,
+	pub neurons:Vec<Vec<f64>>,
+	pub weights:Vec<Vec<Vec<f64>>>,
+	pub biases:Vec<Vec<f64>>,
 	pub activations:Vec<Activations>,
 	pub layers:Vec<usize>,
-	pub learning_rate: f32,
-	pub cost: f32
+	pub learning_rate: f64,
+	pub cost: f64
 }
 
+#[allow(dead_code)]
 impl Neuralnet {
 
 	pub fn new(layers:Vec<usize>, activations:Vec<Activations>) -> Neuralnet
@@ -48,9 +50,9 @@ impl Neuralnet {
 
 		for i in 1..self.layers.len() {
 			let num_items = self.layers[i];
-			let mut bias : Vec<f32> = vec![0.0; num_items];
+			let mut bias : Vec<f64> = vec![0.0; num_items];
 			for j in 0..num_items {
-				bias[j] = rng.gen_range(-0.5..0.5) / num_items as f32;
+				bias[j] = rng.gen_range(-0.5..0.5) / num_items as f64;
 			}
 			self.biases.push(bias);
 		}
@@ -63,11 +65,11 @@ impl Neuralnet {
 
 		for i in 1..self.layers.len() {
 			let num_prev_items = self.layers[i-1];
-			let mut layer_weights : Vec<Vec<f32>> = Vec::new();
+			let mut layer_weights : Vec<Vec<f64>> = Vec::new();
 			for _j in 0..self.layers[i] {
-				let mut neuron_weights : Vec<f32> = vec![0.0; num_prev_items];
+				let mut neuron_weights : Vec<f64> = vec![0.0; num_prev_items];
 				for k in 0..num_prev_items {
-					neuron_weights[k] = rng.gen_range(-0.5..0.5) / num_prev_items as f32;
+					neuron_weights[k] = rng.gen_range(-0.5..0.5) / num_prev_items as f64;
 				}
 				layer_weights.push(neuron_weights);
 			}
@@ -75,7 +77,7 @@ impl Neuralnet {
 		}
 	}
 
-	pub fn activate(&self, x:f32, layer_id: usize) -> f32 {
+	pub fn activate(&self, x:f64, layer_id: usize) -> f64 {
 		match self.activations[layer_id] {
 			Activations::Sigmoid => sigmoid(x),
 			Activations::ReLU => relu(x),
@@ -86,7 +88,7 @@ impl Neuralnet {
 		}
 	}
 
-	pub fn feed_forward(&mut self, inputs:&Vec<f32>) -> Vec<f32> {
+	pub fn feed_forward(&mut self, inputs:&Vec<f64>) -> Vec<f64> {
 		for i in 0..inputs.len() {
 			self.neurons[0][i] = inputs[i];
 		}
@@ -94,7 +96,7 @@ impl Neuralnet {
 			let layer_idx = i - 1;
 
 			for j in 0..self.layers[i] {
-				let mut value:f32 = 0.0;
+				let mut value:f64 = 0.0;
 				for k in 0..self.layers[i-1] {
 					value += self.weights[i - 1][j][k] * self.neurons[i - 1][k];
 				}
@@ -103,7 +105,7 @@ impl Neuralnet {
 
 			match self.activations[layer_idx] {
 				Activations::SoftMax => {
-					let mut sigma : f32 = 0.0;
+					let mut sigma : f64 = 0.0;
 					for j in 0..self.layers[i] {
 						sigma += self.neurons[i][j];
 					}
@@ -117,7 +119,7 @@ impl Neuralnet {
 		self.neurons[self.layers.len() - 1].clone()
 	}
 
-	 fn update_weights(&mut self, new_weights : &Vec<f32>) {
+	 fn update_weights(&mut self, new_weights : &Vec<f64>) {
 
 		let mut l : usize = 0;
 
@@ -138,7 +140,7 @@ impl Neuralnet {
 		}
 	}
 
-	fn update_biases(&mut self, new_biases : &Vec<f32>){
+	fn update_biases(&mut self, new_biases : &Vec<f64>){
 		
 		let mut l : usize =0;
 
@@ -156,7 +158,7 @@ impl Neuralnet {
 		}
 	}
 
-	pub fn update_weights_biases(&mut self, new_weights_biases : &Vec<f32> ){
+	pub fn update_weights_biases(&mut self, new_weights_biases : &Vec<f64> ){
 
 		let mut l : usize = 0;
 

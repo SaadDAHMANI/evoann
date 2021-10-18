@@ -6,7 +6,7 @@ include!("eo_trainer.rs");
 fn main() {
     println!("Hello, world!");
 
-    let layers:Vec<usize> = vec!{2,5,2};
+    let layers:Vec<usize> = vec!{4,2,1};
     let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear };
     let mut nn = Neuralnet::new(layers, activations);
     
@@ -14,10 +14,10 @@ fn main() {
      //   neuralnet : nn,
     //};   
     
-    let mut wb = vec![0.0f32; nn.get_weights_biases_count()];
+    let mut wb = vec![0.0f64; nn.get_weights_biases_count()];
 
     for i in 0..wb.len() {
-        wb[i] = i as f32;
+        wb[i] = i as f64;
     }
     
 
