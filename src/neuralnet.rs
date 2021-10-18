@@ -117,7 +117,53 @@ impl Neuralnet {
 		self.neurons[self.layers.len() - 1].clone()
 	}
 
-	
+	pub fn update_weights(&mut self, new_weights : &Vec<f32>) {
+
+		let mut l : usize = 0;
+
+		let number_of_layers = self.layers.len();
+		
+		for i in 1..number_of_layers {
+
+			let neurons_previous_layer = self.layers[i-1];
+
+			for j in 0..self.layers[i] {
+
+				for k in 0..neurons_previous_layer {
+
+					self.weights[i-1][j][k] = new_weights[l];					
+					l+=1;
+				}
+			}
+		}
+	}
+
+    fn get_weights_count(&self)-> usize {
+
+		let mut count : usize =0;
+		
+		for i in 1..self.layers.len() {
+		   count += self.layers[i-1]* self.layers[i]; 
+		}
+		count
+	   }
+   
+	   fn get_biases_count(&self)->usize {
+		
+		   let mut count : usize =0;
+		
+		   for i in 1..self.layers.len() {
+				count += self.layers[i]; 
+		   }
+		   count
+	   }
+   
+	   pub fn weights_biases_count(&self)-> usize {
+		  self.get_weights_count()+ self.get_biases_count()
+	   }
+   
+   
+   
 
 
 

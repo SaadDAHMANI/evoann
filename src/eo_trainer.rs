@@ -7,30 +7,30 @@ impl Trainer {
 
     fn get_weights_count(&self)-> usize {
 
-     let mut count : usize =0;
-     
-     for i in 1..self.neuralnet.layers.len() {
-        count += self.neuralnet.layers[i-1]* self.neuralnet.layers[i]; 
-     }
-     count
-    }
-
-    fn get_biases_count(&self)->usize {
-     
         let mut count : usize =0;
-     
+        
         for i in 1..self.neuralnet.layers.len() {
-             count += self.neuralnet.layers[i]; 
+           count += self.neuralnet.layers[i-1]* self.neuralnet.layers[i]; 
         }
         count
-    }
-
-    pub fn weights_biases_count(&self)-> usize {
-       self.get_weights_count()+ self.get_biases_count()
-    }
-
-
-
+       }
+   
+       fn get_biases_count(&self)->usize {
+        
+           let mut count : usize =0;
+        
+           for i in 1..self.neuralnet.layers.len() {
+                count += self.neuralnet.layers[i]; 
+           }
+           count
+       }
+   
+       pub fn weights_biases_count(&self)-> usize {
+          self.get_weights_count()+ self.get_biases_count()
+       }
+   
+   
+   
     
 
 }
