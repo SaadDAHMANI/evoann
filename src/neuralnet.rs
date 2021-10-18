@@ -117,7 +117,7 @@ impl Neuralnet {
 		self.neurons[self.layers.len() - 1].clone()
 	}
 
-	pub fn update_weights(&mut self, new_weights : &Vec<f32>) {
+	 fn update_weights(&mut self, new_weights : &Vec<f32>) {
 
 		let mut l : usize = 0;
 
@@ -138,7 +138,7 @@ impl Neuralnet {
 		}
 	}
 
-	pub fn update_biases(&mut self, new_biases : &Vec<f32>){
+	fn update_biases(&mut self, new_biases : &Vec<f32>){
 		
 		let mut l : usize =0;
 
@@ -210,7 +210,7 @@ impl Neuralnet {
 		   count
 	   }
    
-	   pub fn weights_biases_count(&self)-> usize {
+	   pub fn get_weights_biases_count(&self)-> usize {
 		  self.get_weights_count()+ self.get_biases_count()
 	   }
    
