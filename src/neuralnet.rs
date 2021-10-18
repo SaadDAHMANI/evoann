@@ -49,8 +49,8 @@ impl Neuralnet {
 		for i in 1..self.layers.len() {
 			let num_items = self.layers[i];
 			let mut bias : Vec<f32> = vec![0.0; num_items];
-			for i in 0..num_items {
-				bias[i] = rng.gen_range(-0.5..0.5) / num_items as f32;
+			for j in 0..num_items {
+				bias[j] = rng.gen_range(-0.5..0.5) / num_items as f32;
 			}
 			self.biases.push(bias);
 		}
@@ -137,6 +137,25 @@ impl Neuralnet {
 			}
 		}
 	}
+
+	pub fn update_biases(&mut self, new_biases : &Vec<f32>){
+		
+		let mut l : usize =0;
+
+		for i in 1..self.layers.len() {
+			
+			let num_nodes = self.layers[i];
+
+			for j in 0..num_nodes {
+
+				self.biases[i-1][j] = new_biases[l];
+				
+				l+=1;
+			}
+
+		}
+	}
+
 
     fn get_weights_count(&self)-> usize {
 
