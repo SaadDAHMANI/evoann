@@ -13,7 +13,7 @@ impl Trainer {
     pub fn learn(&mut self) {
          self.learn_dataset_size = self.learn_in.len();
          if self.learn_dataset_size != self.expected_learn_out.len() {
-             panic!("Proble with learniong dataset size (size_in must be = size_out).");
+             panic!("Problem with learniong dataset size : count of learning input items must be equals (=) to count of learning output items.");
          }   
 
          let dim = self.neuralnet.get_weights_biases_count();
@@ -47,10 +47,9 @@ impl Trainer {
             totalerror +=err;
         }
         totalerror
-    }
-    
-    
+    }    
 }
+
 
 
 #[cfg(test)]

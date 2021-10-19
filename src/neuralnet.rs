@@ -1,6 +1,6 @@
 use rand::Rng;
 
-
+#[derive(Debug, Clone)]
 pub struct Neuralnet {
 	pub neurons:Vec<Vec<f64>>,
 	pub weights:Vec<Vec<Vec<f64>>>,

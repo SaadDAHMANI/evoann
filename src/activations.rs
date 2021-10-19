@@ -1,5 +1,5 @@
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub enum Activations {
 	Sigmoid,
 	TanH,
