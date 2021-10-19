@@ -202,7 +202,7 @@ impl Neuralnet {
 		count
 	   }
    
-	   fn get_biases_count(&self)->usize {
+    fn get_biases_count(&self)->usize {
 		
 		   let mut count : usize =0;
 		
@@ -212,16 +212,11 @@ impl Neuralnet {
 		   count
 	   }
    
-	   pub fn get_weights_biases_count(&self)-> usize {
+    pub fn get_weights_biases_count(&self)-> usize {
 		  self.get_weights_count()+ self.get_biases_count()
 	   }
+
+	  
+
    
-   
-   
-
-
-
-
-	
-
-}
+   }
