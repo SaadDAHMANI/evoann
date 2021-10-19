@@ -1,0 +1,12 @@
+[package]
+name = "eoalib"
+version = "0.1.0"
+edition = "2018"
+authors = ["Saad DAHMANI <sd.dahmani2000@gmail.com; s.dahmani@univ-bouira.dz>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.4"
+rayon = "1.5.1"
+

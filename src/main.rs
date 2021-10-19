@@ -2,6 +2,8 @@
 include!("neuralnet.rs");
 include!("activations.rs");
 include!("eo_trainer.rs");
+extern crate eoalib;
+use eoalib::*;
 
 fn main() {
     println!("Hello, world!");
@@ -18,8 +20,7 @@ fn main() {
 
     for i in 0..wb.len() {
         wb[i] = i as f64;
-    }
-    
+    }    
 
     println!("W before update = {:?}", nn.weights);
 
@@ -31,6 +32,18 @@ fn main() {
     
     println!("biases after update = {:?}", nn.biases);
 
+    let no : usize = 10;
+    let dim : usize = 5;
+    let kmax : usize =100;
+    let lb : f64 =-10.0;
+    let ub : f64 = 10.0;
+    {
+    let (a,b,c) = sequential_eo(no, kmax, lb, ub, dim, &fobj1);
+    println!("best fitness = {:?}", a);
+    println!("best solution = {:?}", b);
+    println!("final best chart = {:?}", c[c.len()-1]);
+
+    }
 
 
 
@@ -39,4 +52,12 @@ fn main() {
 
 
     
+}
+
+fn fobj1(x : &Vec<f64>)-> f64 {
+    let mut sum= 0.0f64;
+    for i in 0..x.len(){
+        sum += x[i];
+    } 
+    sum
 }

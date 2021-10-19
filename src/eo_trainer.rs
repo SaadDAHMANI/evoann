@@ -11,12 +11,11 @@ impl Trainer {
 
     fn objective_function(&self, genome : &Vec<f64>)->f64 {
         
-        
-        
+                
         return 0.0f64;
     }
 
-     fn Learn(&self){
+     fn learn(&self){
 
 
 
