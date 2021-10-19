@@ -2,8 +2,13 @@
 // Saad Dahmani (sd.dahmani2000@gmail.com; s.dahmani@univ-bouira.dz)
 // https://github.com/SaadDAHMANI/equilibrium_optimizer
 //----------------------------------------------------------------------------------
+extern crate rand;
+//extern crate rayon;
+use rand::distributions::Uniform;
+use rand::distributions::Distribution;
+//use rayon::prelude::*;
 
-pub fn sequential_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : usize, fobj : &dyn Fn(&Vec<f64>)->f64) -> (f64, Vec<f64>, Vec<f64>) {
+pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : usize, nnet : &mut Trainer, fobj : &mut dyn for<'r, 's> FnMut(&'r mut Trainer, &'s Vec<f64>) -> f64) -> (f64, Vec<f64>, Vec<f64>) {
     
     // Initialize variables 
     //Ceq1=zeros(1,dim);   Ceq1_fit=inf; 
@@ -81,7 +86,7 @@ pub fn sequential_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64,
     
             // compute fitness for agents
             
-            fitness[i] = fobj(&c[i]);
+            fitness[i] = fobj(nnet, &c[i]);
     
             // check fitness with best 
             if fitness[i] < ceq1_fit {

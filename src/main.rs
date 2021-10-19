@@ -2,6 +2,8 @@
 include!("neuralnet.rs");
 include!("activations.rs");
 include!("eo_trainer.rs");
+include!("seq_eo.rs");
+
 extern crate eoalib;
 use eoalib::*;
 
@@ -43,15 +45,7 @@ fn main() {
     println!("best solution = {:?}", b);
     println!("final best chart = {:?}", c[c.len()-1]);
 
-    }
-
-
-
-
-
-
-
-    
+    }    
 }
 
 fn fobj1(x : &Vec<f64>)-> f64 {
@@ -61,3 +55,5 @@ fn fobj1(x : &Vec<f64>)-> f64 {
     } 
     sum
 }
+
+   

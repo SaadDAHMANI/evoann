@@ -277,12 +277,6 @@ fn copy_solution(source : &Solution, destination : &mut Solution){
      }
  }
 
- fn copy_vector(source : & Vec<f64>, destination : &mut Vec<f64>){
-     for i in 0..source.len() {
-         destination[i]=source[i];
-     }
- }
-
  fn copy_population(source : & Vec<Solution>, destination : &mut Vec<Solution>) {
     
      let ni = source.len();
