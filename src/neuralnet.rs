@@ -214,8 +214,24 @@ impl Neuralnet {
    
     pub fn get_weights_biases_count(&self)-> usize {
 		  self.get_weights_count()+ self.get_biases_count()
-	   }
+	}
 
+	fn compute_learning_error(&mut self, learn_in : &Vec<Vec<f64>>,  expected_learn_out : &Vec<Vec<f64>>)->f64 {
+
+        let mut totalerror : f64 = 0.0f64;
+        let mut err : f64 =0.0f64;
+
+        for i in 0..learn_in.len() {
+
+            let computed = self.feed_forward(&learn_in[i]);
+
+            for j in 0..computed.len(){
+               err = f64::powi(expected_learn_out[i][j]- computed[j], 2); 
+            }
+            totalerror +=err;
+        }
+        totalerror
+    }    
 	  
 
    

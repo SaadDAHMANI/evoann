@@ -8,8 +8,65 @@ use rand::distributions::Uniform;
 use rand::distributions::Distribution;
 //use rayon::prelude::*;
 
-pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : usize, nnet : &mut Trainer, fobj : &mut dyn for<'r, 's> FnMut(&'r mut Trainer, &'s Vec<f64>) -> f64) -> (f64, Vec<f64>, Vec<f64>) {
+pub struct SequentialEOTrainer{
+     neuralnet : Neuralnet,
+     particles : usize,
+     dimension : usize,
+     max_iterations : usize,
+     upper_bound : f64,
+     lower_bound : f64,
+     //final_leran_error : f64,
+     learn_in : Vec<Vec<f64>>,
+     expected_learn_out : Vec<Vec<f64>>,
+     //learning_curve : Vec<f64>,
+     //best_weights_biases : Vec<f64>,
+}
+
+impl SequentialEOTrainer {
+
+    pub fn new(neuralnet: Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, dim : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
+        SequentialEOTrainer {
+             neuralnet : neuralnet,
+             particles : particles,
+             dimension : dim,
+             max_iterations : max_iter,
+             upper_bound : ub,
+             lower_bound : lb,
+             learn_in : learnin,
+             expected_learn_out : learnout,
+         } 
+   }    
+
+
+pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
+
+    let incount = self.learn_in.len();
+    let outcount = self.expected_learn_out.len();
+
+     if incount != outcount {
+         panic!("Problem with learniong dataset size : count of learning input items must be equals (=) to count of learning output items.");
+     }   
+
+     let (a, b, c) = self.run_seq_eo();
+
+     (a,b,c)
+
+     //self.best_weights_biases = b;
+     //self.learning_curve = c;
+}
+
+fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
+    self.neuralnet.update_weights_biases(&genome);
+    let learn_error : f64 = self.neuralnet.compute_learning_error(&self.learn_in, &self.expected_learn_out);         
+    return learn_error;
+}
+
+pub fn run_seq_eo(&mut self) -> (f64, Vec<f64>, Vec<f64>) {
     
+    let dim = self.dimension;
+    let ub=self.upper_bound;
+    let lb =self.lower_bound;
+
     // Initialize variables 
     //Ceq1=zeros(1,dim);   Ceq1_fit=inf; 
     //Ceq2=zeros(1,dim);   Ceq2_fit=inf; 
@@ -36,7 +93,7 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
     
     
     //C=initialization(Particles_no,dim,ub,lb);
-    let mut c =initialization(particles_no, dim, lb, ub);
+    let mut c = self.initialization();
     
     // Iter=0; V=1;
     let mut iter =0;
@@ -51,9 +108,9 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
     let gp : f64 = 0.5;
     
     // to store agents fitness values
-    let mut fitness = vec![0.0f64; particles_no];
-    let mut fit_old = vec![0.0f64; particles_no];
-    let mut c_old = vec![vec![0.0f64; dim]; particles_no];
+    let mut fitness = vec![0.0f64; self.particles];
+    let mut fit_old = vec![0.0f64; self.particles];
+    let mut c_old = vec![vec![0.0f64; dim]; self.particles];
     let mut c_pool = vec![vec![0.0f64; dim]; 5];
     let mut lambda = vec![0.0f64; dim];
     let mut r = vec![0.0f64; dim];
@@ -68,13 +125,12 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
      let mut rng = rand::thread_rng();
     //------------------------------------------
     
-    let mut convergence_curve = vec![0.0f64; max_iter]; 
+    let mut convergence_curve = vec![0.0f64; self.max_iterations]; 
     let mut _index : usize = 0;
     let mut _g0 : f64 = 0.0; 
-    let mut _g : f64 = 0.0;
+    let mut _g : f64 = 0.0;    
     
-    
-    while iter < max_iter {
+    while iter < self.max_iterations{
     
         for i in 0..c.len() {
     
@@ -86,43 +142,45 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
     
             // compute fitness for agents
             
-            fitness[i] = fobj(nnet, &c[i]);
-    
+            //fitness[i] = fobj(&mut self.target_object, &c[i]);
+            fitness[i] = self.objectif_fn(&c[i]);
+            
+
             // check fitness with best 
             if fitness[i] < ceq1_fit {
                 ceq1_fit= fitness[i];
-                copy_vector(&c[i], &mut ceq1);
+                self.copy_vector(&c[i], &mut ceq1);
             }
             else if (fitness[i] < ceq2_fit) & (fitness[i] > ceq1_fit) {
                 ceq2_fit= fitness[i];
-                copy_vector(&c[i], &mut ceq2);            
+                self.copy_vector(&c[i], &mut ceq2);            
             }
             else if (fitness[i] < ceq3_fit) & (fitness[i] > ceq2_fit) & (fitness[i] > ceq1_fit) {
                 ceq3_fit= fitness[i];
-                copy_vector(&c[i], &mut ceq3);
+                self.copy_vector(&c[i], &mut ceq3);
             }
             else if (fitness[i] < ceq4_fit) & (fitness[i] > ceq3_fit) & (fitness[i] > ceq2_fit) & (fitness[i] > ceq1_fit) {
                 ceq4_fit= fitness[i];
-                copy_vector(&c[i], &mut ceq4);
+                self.copy_vector(&c[i], &mut ceq4);
             }
         }
     
         //-- Memory saving---
     
         if iter == 0 {
-            copy_vector(&fitness, &mut fit_old);
-            copy_matrix(&c, &mut c_old);
+            self.copy_vector(&fitness, &mut fit_old);
+            self.copy_matrix(&c, &mut c_old);
         }
     
-        for i in 0..particles_no {
+        for i in 0..self.particles {
             if fit_old[i] < fitness[i] {
                 fitness[i]=fit_old[i];
-                copy_vector(&c_old[i], &mut c[i]);
+                self.copy_vector(&c_old[i], &mut c[i]);
             }
         }
     
-        copy_matrix(&c, &mut c_old);
-        copy_vector(&fitness, &mut fit_old);
+       self.copy_matrix(&c, &mut c_old);
+       self.copy_vector(&fitness, &mut fit_old);
     
         // compute averaged candidate Ceq_ave 
         for i in 0..dim {
@@ -139,21 +197,21 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
         }
     
         // comput t using Eq 09
-        let tmpt = (iter / max_iter) as f64;
+        let tmpt = (iter / self.max_iterations) as f64;
         let t : f64 = (1.0 - tmpt).powf(a2*tmpt);
 
         // let chronos = Instant::now();
         
-        for i in 0..particles_no {
+        for i in 0..self.particles {
     
-             randomize(&mut lambda);        //  lambda=rand(1,dim);  lambda in Eq(11)
-             randomize(&mut r);             //  r=rand(1,dim);  r in Eq(11  
+            self.randomize(&mut lambda);        //  lambda=rand(1,dim);  lambda in Eq(11)
+            self.randomize(&mut r);             //  r=rand(1,dim);  r in Eq(11  
                     
             //-------------------------------------------------------
             // Ceq=C_pool(randi(size(C_pool,1)),:); 
             // random selection of one candidate from the pool
              _index = interval.sample(&mut rng);
-             copy_vector(&c_pool[_index], &mut ceq);
+             self.copy_vector(&c_pool[_index], &mut ceq);
              //--------------------------------------------------------
              // compute F using Eq(11) 
              for j in 0..dim {
@@ -161,8 +219,8 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
          }
     
          // r1 and r2 to use them in Eq(15)
-            randomize(&mut r1);
-            randomize(&mut r2);
+         self.randomize(&mut r1);
+         self.randomize(&mut r2);
     
          for j in 0..dim {
              // Eq. 15
@@ -192,22 +250,22 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
     
     }
     
-    fn initialization(searchagents_no : usize, dim : usize, lb : f64, ub : f64)-> Vec<Vec<f64>>{
-        let mut positions = vec![vec![0.0f64; dim]; searchagents_no];
+fn initialization(&self)-> Vec<Vec<f64>>{
+        let mut positions = vec![vec![0.0f64; self.dimension]; self.particles];
         let intervall01 = Uniform::from(0.0f64..=1.0f64);
         let mut rng = rand::thread_rng();              
         
-        for i in 0..searchagents_no {
-             for  j in 0..dim {   
-                  positions[i][j]= intervall01.sample(&mut rng)*(ub-lb)+lb;                         
+        for i in 0..self.particles {
+             for  j in 0..self.dimension {   
+                  positions[i][j]= intervall01.sample(&mut rng)*(self.upper_bound-self.lower_bound)+self.lower_bound;                         
              }
         }    
         
         positions
-    }
-    
- 
-    fn copy_matrix(source : & Vec<Vec<f64>>, destination : &mut Vec<Vec<f64>>) {
+}
+  
+
+fn copy_matrix(&self, source : & Vec<Vec<f64>>, destination : &mut Vec<Vec<f64>>) {
     
         let ni = source.len();
         let nj = source[0].len();
@@ -217,20 +275,20 @@ pub fn seq_eo(particles_no : usize, max_iter : usize, lb : f64, ub : f64, dim : 
                 destination[i][j] =source[i][j];
             }
          }
-    }
+}
    
-    fn randomize(randvect : &mut Vec<f64>) {    
+fn randomize(&self, randvect : &mut Vec<f64>) {    
         let between = Uniform::from(0.0..=1.0);
         let mut rng = rand::thread_rng();
                 
         for i in 0..randvect.len() {
             randvect[i]=between.sample(&mut rng);
         }
-      }
-      
-
- fn copy_vector(source : & Vec<f64>, destination : &mut Vec<f64>){
+}
+    
+fn copy_vector(&self, source : & Vec<f64>, destination : &mut Vec<f64>){
     for i in 0..source.len() {
         destination[i]=source[i];
-    }
+        }
+ }
 }
