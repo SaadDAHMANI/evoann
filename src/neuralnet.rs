@@ -221,18 +221,23 @@ impl Neuralnet {
         let mut totalerror : f64 = 0.0f64;
         let mut err : f64 =0.0f64;
 
+		println!("Wi = {:?}", self.weights);
+
         for i in 0..learn_in.len() {
 
             let computed = self.feed_forward(&learn_in[i]);
 
             for j in 0..computed.len(){
                err = f64::powi(expected_learn_out[i][j]- computed[j], 2); 
+			   //println!("err : {}", err);
             }
             totalerror +=err;
         }
+		println!("err : {}", totalerror);
         totalerror
-    }    
-	  
+    } 
+	
+	
 
    
    }

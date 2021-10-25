@@ -8,7 +8,7 @@ use rand::distributions::Uniform;
 use rand::distributions::Distribution;
 //use rayon::prelude::*;
 
-pub struct SequentialEOTrainer{
+pub struct SequentialEOTrainer {
      neuralnet : Neuralnet,
      particles : usize,
      dimension : usize,
@@ -24,11 +24,11 @@ pub struct SequentialEOTrainer{
 
 impl SequentialEOTrainer {
 
-    pub fn new(neuralnet: Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, dim : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
+    pub fn new(neuralnet: Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
         SequentialEOTrainer {
              neuralnet : neuralnet,
              particles : particles,
-             dimension : dim,
+             dimension : 0,
              max_iterations : max_iter,
              upper_bound : ub,
              lower_bound : lb,
@@ -37,15 +37,21 @@ impl SequentialEOTrainer {
          } 
    }    
 
+   pub fn compute_out_for(&mut self, inputs : &Vec<f64>)-> Vec<f64>{
+    self.neuralnet.feed_forward(&inputs)
+}
 
-pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
 
-    let incount = self.learn_in.len();
-    let outcount = self.expected_learn_out.len();
+    pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
 
-     if incount != outcount {
+        let incount = self.learn_in.len();
+        let outcount = self.expected_learn_out.len();
+
+        if incount != outcount {
          panic!("Problem with learniong dataset size : count of learning input items must be equals (=) to count of learning output items.");
      }   
+
+     self.dimension = self.neuralnet.get_weights_biases_count();
 
      let (a, b, c) = self.run_seq_eo();
 
@@ -55,10 +61,14 @@ pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
      //self.learning_curve = c;
 }
 
-fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
-    self.neuralnet.update_weights_biases(&genome);
-    let learn_error : f64 = self.neuralnet.compute_learning_error(&self.learn_in, &self.expected_learn_out);         
-    return learn_error;
+    fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
+        self.neuralnet.update_weights_biases(&genome);
+
+        //println!("genome : {:?}", genome);      
+
+        let learn_error : f64 = self.neuralnet.compute_learning_error(&self.learn_in, &self.expected_learn_out); 
+        //println!("learn_error : {:?}", learn_error);       
+        return learn_error;
 }
 
 pub fn run_seq_eo(&mut self) -> (f64, Vec<f64>, Vec<f64>) {
