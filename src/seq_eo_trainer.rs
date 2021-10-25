@@ -64,7 +64,7 @@ impl SequentialEOTrainer {
     fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
         self.neuralnet.update_weights_biases(&genome);
 
-        //println!("genome : {:?}", genome);      
+        println!("genome : {:?}", genome);      
 
         let learn_error : f64 = self.neuralnet.compute_learning_error(&self.learn_in, &self.expected_learn_out); 
         //println!("learn_error : {:?}", learn_error);       

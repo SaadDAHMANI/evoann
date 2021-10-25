@@ -117,7 +117,7 @@ impl Neuralnet {
 			}
 		}
 		self.neurons[self.layers.len() - 1].clone()
-	}
+	}                                                                            
 
 	 fn update_weights(&mut self, new_weights : &Vec<f64>) {
 
@@ -221,7 +221,7 @@ impl Neuralnet {
         let mut totalerror : f64 = 0.0f64;
         let mut err : f64 =0.0f64;
 
-		println!("Wi = {:?}", self.weights);
+		//println!("Wi = {:?}", self.weights);
 
         for i in 0..learn_in.len() {
 
@@ -233,7 +233,7 @@ impl Neuralnet {
             }
             totalerror +=err;
         }
-		println!("err : {}", totalerror);
+		//println!("err : {}", totalerror);
         totalerror
     } 
 	
