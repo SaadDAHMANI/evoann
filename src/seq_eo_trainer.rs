@@ -22,7 +22,7 @@ pub struct SequentialEOTrainer<'a>{
      //best_weights_biases : Vec<f64>,
 }
 
-impl<'a> SequentialEOTrainer <'a> {
+impl<'a> SequentialEOTrainer<'a> {
 
     pub fn new(neuralnet: &'a mut Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
      let mut newtrainer = SequentialEOTrainer {

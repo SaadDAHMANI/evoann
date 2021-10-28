@@ -81,14 +81,20 @@ fn main() {
              let path = "/home/sd/Documents/AppDev/Rust/evoann/data/data.csv";
 
              let result = read_from_file(&path);
-             match result {
-                 Ok(data) => println!("result = {:?}", data),
-                 Err(error) => println!("error = {:?}", error),
+             let data = match result {
+                 Ok(data) => data,
+                 Err(error) => panic!("There is a proble in the file : {}", error),
              };
+             
+             for i in 0..data.len() {
+                             
+                for j in 0..data[i].len(){
+                    print!("{} ", data[i][j]);
+                 }
+                 println!(" ");
+             }
 
         }
-      
-        
 }
 
 fn getdata_in(n : usize)->Vec<Vec<f64>> {
@@ -121,7 +127,7 @@ fn getdata_out(data : &Vec<Vec<f64>>)->Vec<Vec<f64>> {
     positions
 }
 
-fn read_from_file(path : &str)-> Result<(), Box<dyn Error>> {
+fn read_from_file(path : &str)-> Result< Vec<Vec<f64>>, Box<dyn Error>> {
     
     let mut reader = csv::Reader::from_path(path)?;
     
@@ -129,22 +135,26 @@ fn read_from_file(path : &str)-> Result<(), Box<dyn Error>> {
     
     println!("Headers :  {:?}", headers);
 
+    let mut data = Vec::new();
+
     for result in reader.records() {
 
         let record = result?;
 
         if record.is_empty()==false {
             let l = record.len();
-            for i in 0..l {
-                  //print!("{:?}", &record[i]);
-                  //print!(" ");
-                  let ca : f64 = record[i].parse()?;
+            let mut row = vec![0.0f64; l];
 
-                  println!("[Ca] = {:?} ", ca);
-             }
-             println!("_");
-        }
+            for i in 0..l {
+                row[i] = record[i].parse()?; 
+            }
+            data.push(row)            
+        }       
     }
 
-    Ok(())
-}  
+    Ok(data)
+}
+
+
+
+
