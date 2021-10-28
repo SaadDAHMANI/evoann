@@ -60,34 +60,28 @@ fn main() {
       println!("Best [Wi, bi] : {:?}", _wbi );
       //println!("c : {:?}", _c );   
       
-       {
-        println!("---------------------TESTING-----------------------"); 
-        let mut bestnnet = nnet.clone();
-        bestnnet.update_weights_biases(&_wbi);  
-        
+        {
+             println!("---------------------TESTING-----------------------"); 
+             let mut bestnnet = nnet.clone();
+             bestnnet.update_weights_biases(&_wbi);  
+
+             let mut test = vec![0.0f64; 2];
+             test[0] = 0.7;
+             test[1] = 0.7;
+             
+             println!("--------------------------------------------"); 
+             
+             println!("_");
+
+             println!("Real [Wi] = {:?}", bestnnet.weights);
+
+             println!("Real [bi] = {:?}", bestnnet.biases);
+
+             println!("_");
+      
+             println!("testing result Cos(...) {:?} --> {:?}", test, bestnnet.feed_forward(&test));           
        } 
       
-      
-
-      let mut test = vec![0.0f64; 2];
-      test[0] = 0.2;
-      test[1] = 0.3;
-      println!("--------------------------------------------"); 
-      println!("_");
-
-      println!("Real [Wi] = {:?}", nnet.weights);
-
-      println!("Real [bi] = {:?}", nnet.biases);
-
-      println!("_");
-      
-      println!("testing result Cos(...) {:?} --> {:?}", test, nnet.feed_forward(&test));
-    
-     
-
-
-      
-
       //let path = "/home/sd/Documents/AppDev/Rust/evoann/data/data.csv";
 
        // if let Err(e)= read_from_file(&path) {

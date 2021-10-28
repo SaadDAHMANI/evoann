@@ -25,7 +25,7 @@ pub struct SequentialEOTrainer<'a>{
 impl<'a> SequentialEOTrainer <'a> {
 
     pub fn new(neuralnet: &'a mut Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
-        SequentialEOTrainer {
+     let mut newtrainer = SequentialEOTrainer {
              neuralnet : neuralnet,
              particles : particles,
              dimension : 0,
@@ -34,31 +34,34 @@ impl<'a> SequentialEOTrainer <'a> {
              lower_bound : lb,
              learn_in : learnin,
              expected_learn_out : learnout,
-         } 
+         };
+
+         newtrainer.dimension = newtrainer.neuralnet.get_weights_biases_count();
+         newtrainer
    }    
 
-   pub fn compute_out_for(&mut self, inputs : &Vec<f64>)-> Vec<f64>{
+    pub fn compute_out_for(&mut self, inputs : &Vec<f64>)-> Vec<f64>{
     self.neuralnet.feed_forward(&inputs)
-}
+    }
 
 
     pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
 
-        let incount = self.learn_in.len();
-        let outcount = self.expected_learn_out.len();
+         let incount = self.learn_in.len();
+         let outcount = self.expected_learn_out.len();
 
         if incount != outcount {
-         panic!("Problem with learniong dataset size : count of learning input items must be equals (=) to count of learning output items.");
-     }   
+          panic!("Problem with learniong dataset size : count of learning input items must be equals (=) to count of learning output items.");
+        }   
 
-     //search the best [Wi, bi] for learning step
-     let (final_err, best_wb, learning_curve) = self.run_seq_eo();
+         //search the best [Wi, bi] for learning step
+         let (final_err, best_wb, learning_curve) = self.run_seq_eo();
      
-     //make the best [Wi, bi] solution as neuralnet weights & biases   
-     self.neuralnet.update_weights_biases(&best_wb);
+         //make the best [Wi, bi] solution as neuralnet weights & biases   
+         self.neuralnet.update_weights_biases(&best_wb);
 
-     (final_err, best_wb, learning_curve)
-}
+         (final_err, best_wb, learning_curve)
+    }
 
     fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
         self.neuralnet.update_weights_biases(&genome);
