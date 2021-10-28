@@ -77,30 +77,77 @@ fn main() {
              println!("[nnet] -> testing result Cos({:?}) --> {:?}", test, nnet.feed_forward(&test));              
         } 
 
+        {
+            test_water_quality();
+        }
+
 }
 
 fn test_water_quality(){
 
        let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/data.csv");
         let mut incols = Vec::new();
-        incols.push(0usize);
+        incols.push(0);
         incols.push(1);
-        incols.push(2);
+        //incols.push(2);
+        //incols.push(3);
+        //incols.push(4);
+        //incols.push(5);
+        //incols.push(6);
+        //incols.push(7);
+        //incols.push(8);
+
+        //incols.push(2);
 
         let mut outcols = Vec::new();
-        outcols.push(3usize);
+        outcols.push(9);
                     
-       let ds =  Dataset::read_from_csvfile(&path, &incols, &outcols);
-       
-       println!("dataset = {:?}", ds);
+       let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
+       let ds = ds0.get_shuffled();
+       //println!("dataset = {:?}", ds);
 
-       println!("--------------------------------");
+       println!("------------------WAETR QUALITY--------------");
 
-       println!("shuffled ataset = {:?}", ds.get_shuffled());            
+       //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{2,1,1};
-       let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
-       let mut nnet = Neuralnet::new(layers, activations);        
+       let layers:Vec<usize> = vec!{incols.len(),4,1};
+       let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
+       let mut nnet = Neuralnet::new(layers, activations); 
+                     
+       //println!("In : {:?}", data_in);
+       //println!("Out : {:?}", data_out);
+       
+       let p_size : usize = 25;
+       let k_max : usize = 2000;
+       let ub : f64 = 5.0;
+       let lb : f64 = -5.0;
+ 
+       let mut eoann = SequentialEOTrainer::new(&mut nnet, ds.inputs, ds.outputs, p_size, k_max, lb, ub);
+       
+       let (_a, _wbi, _c) = eoann.learn();
+       
+       println!("_");
+       
+       println!("WQ - final learning error : {:?}", _a );
+       
+       println!("_"); 
+
+       {
+        println!("---------------------TESTING-----------------------"); 
+        let mut test = vec![0.0f64; 2];
+        test[0] = 0.43;
+        test[1] = 0.344;
+                  
+        println!("_");
+
+        //println!("Real [Wi] = {:?}", nnet.weights);
+
+        //println!("Real [bi] = {:?}", nnet.biases);
+
+        println!("_");
+ 
+        println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
+       }
 
 }
 
