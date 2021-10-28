@@ -42,7 +42,7 @@ impl SequentialEOTrainer {
 }
 
 
-    pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
+    pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>, Neuralnet) {
 
         let incount = self.learn_in.len();
         let outcount = self.expected_learn_out.len();
@@ -55,7 +55,7 @@ impl SequentialEOTrainer {
 
      let (a, b, c) = self.run_seq_eo();
 
-     (a,b,c)
+     (a,b,c, self.neuralnet.clone())
 
      //self.best_weights_biases = b;
      //self.learning_curve = c;
@@ -63,8 +63,7 @@ impl SequentialEOTrainer {
 
     fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
         self.neuralnet.update_weights_biases(&genome);
-
-        println!("genome : {:?}", genome);      
+        //println!("genome[0] : {:?}", genome[0]);      
 
         let learn_error : f64 = self.neuralnet.compute_learning_error(&self.learn_in, &self.expected_learn_out); 
         //println!("learn_error : {:?}", learn_error);       

@@ -92,7 +92,10 @@ impl Neuralnet {
 		for i in 0..inputs.len() {
 			self.neurons[0][i] = inputs[i];
 		}
-		for i in 1..inputs.len() {
+		
+		//for i in 1..inputs.len() {
+		for i in 1..self.layers.len() {
+			
 			let layer_idx = i - 1;
 
 			for j in 0..self.layers[i] {
@@ -184,7 +187,7 @@ impl Neuralnet {
 
 			for j in 0..num_nodes {
 
-				self.biases[i-1][j] = new_weights_biases[l];
+				self.biases[i-1][j] = 1.0;//new_weights_biases[l];
 				
 				l+=1;
 			}
