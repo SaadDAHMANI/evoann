@@ -3,16 +3,16 @@ include!("neuralnet.rs");
 include!("activations.rs");
 //include!("eo_trainer.rs");
 include!("seq_eo_trainer.rs");
+include!("csvrw.rs");
 
 //extern crate eoalib;
 //se eoalib::*;
 use std::error::Error;
-use csv;
 
 fn main() {
-    println!("Hello, world!");
+    println!("Hello, Evo-ANN!");
 
-    let layers:Vec<usize> = vec!{2,4,1};
+    let layers:Vec<usize> = vec!{2,1,1};
     let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
     let mut nnet = Neuralnet::new(layers, activations);
     
@@ -35,7 +35,7 @@ fn main() {
     println!("---------------------------------------------");
       
 
-      let n : usize = 50;
+      let n : usize = 10;
       let  data_in = getdata_in(n);
       let  data_out = getdata_out(&data_in);
       
@@ -43,9 +43,9 @@ fn main() {
       //println!("Out : {:?}", data_out);
 
       let p_size : usize = 10;
-      let k_max : usize = 500;
-      let ub : f64 = 1.0;
-      let lb : f64 = -1.0;
+      let k_max : usize = 1;
+      let ub : f64 = 10.0;
+      let lb : f64 = -10.0;
 
       let mut eoann = SequentialEOTrainer::new(&mut nnet, data_in, data_out,p_size, k_max, lb, ub);
       
@@ -62,34 +62,33 @@ fn main() {
       
         {
              println!("---------------------TESTING-----------------------"); 
-             let mut bestnnet = nnet.clone();
-             bestnnet.update_weights_biases(&_wbi);  
-
              let mut test = vec![0.0f64; 2];
-             test[0] = 0.7;
-             test[1] = 0.7;
-             
-             println!("--------------------------------------------"); 
-             
+             test[0] = 0.5;
+             test[1] = 0.9;
+                       
              println!("_");
 
-             println!("Real [Wi] = {:?}", bestnnet.weights);
+             println!("Real [Wi] = {:?}", nnet.weights);
 
-             println!("Real [bi] = {:?}", bestnnet.biases);
+             println!("Real [bi] = {:?}", nnet.biases);
 
              println!("_");
       
-             println!("testing result Cos(...) {:?} --> {:?}", test, bestnnet.feed_forward(&test));           
-       } 
+             println!("[nnet] -> testing result Cos({:?}) --> {:?}", test, nnet.feed_forward(&test));              
+        } 
+
+        {
+             let path = "/home/sd/Documents/AppDev/Rust/evoann/data/data.csv";
+
+             let result = read_from_file(&path);
+             match result {
+                 Ok(data) => println!("result = {:?}", data),
+                 Err(error) => println!("error = {:?}", error),
+             };
+
+        }
       
-      //let path = "/home/sd/Documents/AppDev/Rust/evoann/data/data.csv";
-
-       // if let Err(e)= read_from_file(&path) {
-       //     eprintln!("{:?}", e)
-       // }
-
-
-  
+        
 }
 
 fn getdata_in(n : usize)->Vec<Vec<f64>> {
@@ -97,12 +96,12 @@ fn getdata_in(n : usize)->Vec<Vec<f64>> {
     let mut positions = vec![vec![0.0f64; d]; n];
     let intervall01 = Uniform::from(0.0f64..0.9f64);
     let mut rng = rand::thread_rng();              
-    let mut value = 0.0f64;
+    //let mut _value = 0.0f64;
     for i in 0..n {
          for  j in 0..d {   
-            value =f64::round(intervall01.sample(&mut rng)*100.0);                         
+            // _value =f64::round(intervall01.sample(&mut rng)*100.0);                         
            
-            positions[i][j]= value/100.0;
+            positions[i][j]= intervall01.sample(&mut rng);
          }
     }        
     positions
@@ -131,10 +130,21 @@ fn read_from_file(path : &str)-> Result<(), Box<dyn Error>> {
     println!("Headers :  {:?}", headers);
 
     for result in reader.records() {
+
         let record = result?;
 
-        println!("{:?}", record);
+        if record.is_empty()==false {
+            let l = record.len();
+            for i in 0..l {
+                  //print!("{:?}", &record[i]);
+                  //print!(" ");
+                  let ca : f64 = record[i].parse()?;
+
+                  println!("[Ca] = {:?} ", ca);
+             }
+             println!("_");
+        }
     }
+
     Ok(())
 }  
-
