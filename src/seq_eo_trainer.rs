@@ -8,8 +8,8 @@ use rand::distributions::Uniform;
 use rand::distributions::Distribution;
 //use rayon::prelude::*;
 
-pub struct SequentialEOTrainer {
-     neuralnet : Neuralnet,
+pub struct SequentialEOTrainer<'a>{
+     neuralnet : &'a mut Neuralnet,
      particles : usize,
      dimension : usize,
      max_iterations : usize,
@@ -22,9 +22,9 @@ pub struct SequentialEOTrainer {
      //best_weights_biases : Vec<f64>,
 }
 
-impl SequentialEOTrainer {
+impl<'a> SequentialEOTrainer <'a> {
 
-    pub fn new(neuralnet: Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
+    pub fn new(neuralnet: &'a mut Neuralnet, learnin : Vec<Vec<f64>>, learnout : Vec<Vec<f64>>, particles : usize, max_iter : usize , lb : f64, ub : f64)-> SequentialEOTrainer {
         SequentialEOTrainer {
              neuralnet : neuralnet,
              particles : particles,

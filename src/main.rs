@@ -12,8 +12,8 @@ use csv;
 fn main() {
     println!("Hello, world!");
 
-    let layers:Vec<usize> = vec!{2,3,4,1};
-    let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Sigmoid, Activations::Sigmoid, Activations::Linear};
+    let layers:Vec<usize> = vec!{2,3,1};
+    let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
     let mut nn = Neuralnet::new(layers, activations);
     
     let mut wb = vec![0.0f64; nn.get_weights_biases_count()];
@@ -35,19 +35,19 @@ fn main() {
     println!("---------------------------------------------");
       
 
-      let n : usize = 100;
+      let n : usize = 50;
       let  data_in = getdata_in(n);
       let  data_out = getdata_out(&data_in);
       
       //println!("In : {:?}", data_in);
       //println!("Out : {:?}", data_out);
 
-      let p_size : usize = 20;
+      let p_size : usize = 10;
       let k_max : usize = 500;
       let ub : f64 = 1.00;
       let lb : f64 = -1.00;
 
-      let mut eoann = SequentialEOTrainer::new(nn, data_in, data_out,p_size, k_max, lb, ub);
+      let mut eoann = SequentialEOTrainer::new(&mut nn, data_in, data_out,p_size, k_max, lb, ub);
       
       let (_a, _b, _c, nnet) = eoann.learn();
       
@@ -60,7 +60,7 @@ fn main() {
       println!("Best [Wi, bi] : {:?}", _b );
       //println!("c : {:?}", _c );   
 
-      let mut bestnnet = nnet.clone();
+      let mut bestnnet = nn; //nnet.clone();
       bestnnet.update_weights_biases(&_b);  
 
       let mut test = vec![0.0f64; 2];
@@ -114,9 +114,9 @@ fn getdata_out(data : &Vec<Vec<f64>>)->Vec<Vec<f64>> {
     let mut positions = vec![vec![0.0f64; 1]; n];
     for i in 0..n {
         for j in 0..d {
-            positions[i][0] += data[i][j]/2.0;            
+            positions[i][0] += data[i][j];            
         }
-        //positions[i][0]= f64::cos(positions[i][0]);
+        positions[i][0]= f64::cos(positions[i][0]);
         //println!("cos = {}",positions[i][0]);
     }
     positions
