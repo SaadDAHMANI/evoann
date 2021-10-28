@@ -187,7 +187,7 @@ impl Neuralnet {
 
 			for j in 0..num_nodes {
 
-				self.biases[i-1][j] = 1.0;//new_weights_biases[l];
+				self.biases[i-1][j] = new_weights_biases[l]; //1.0;
 				
 				l+=1;
 			}

@@ -12,7 +12,7 @@ use csv;
 fn main() {
     println!("Hello, world!");
 
-    let layers:Vec<usize> = vec!{2,3,1};
+    let layers:Vec<usize> = vec!{2,4,1};
     let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
     let mut nnet = Neuralnet::new(layers, activations);
     
@@ -44,8 +44,8 @@ fn main() {
 
       let p_size : usize = 10;
       let k_max : usize = 500;
-      let ub : f64 = 1.00;
-      let lb : f64 = -1.00;
+      let ub : f64 = 1.0;
+      let lb : f64 = -1.0;
 
       let mut eoann = SequentialEOTrainer::new(&mut nnet, data_in, data_out,p_size, k_max, lb, ub);
       
