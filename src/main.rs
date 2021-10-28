@@ -16,11 +16,11 @@ fn main() {
     let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
     let mut nnet = Neuralnet::new(layers, activations);
     
-    let mut wb = vec![0.0f64; nnet.get_weights_biases_count()];
+    //let mut wb = vec![0.0f64; nnet.get_weights_biases_count()];
 
-    for i in 0..wb.len() {
-       wb[i] = i as f64;
-    }    
+    //for i in 0..wb.len() {
+    //   wb[i] = i as f64;
+    //}    
 
     //println!("W before update = {:?}", nn.weights);
 
@@ -41,7 +41,7 @@ fn main() {
       
       //println!("In : {:?}", data_in);
       //println!("Out : {:?}", data_out);
-
+      
       let p_size : usize = 10;
       let k_max : usize = 1;
       let ub : f64 = 10.0;
@@ -77,24 +77,31 @@ fn main() {
              println!("[nnet] -> testing result Cos({:?}) --> {:?}", test, nnet.feed_forward(&test));              
         } 
 
-        {
-             let path = "/home/sd/Documents/AppDev/Rust/evoann/data/data.csv";
+}
 
-             let result = read_from_file(&path);
-             let data = match result {
-                 Ok(data) => data,
-                 Err(error) => panic!("There is a proble in the file : {}", error),
-             };
-             
-             for i in 0..data.len() {
-                             
-                for j in 0..data[i].len(){
-                    print!("{} ", data[i][j]);
-                 }
-                 println!(" ");
-             }
+fn test_water_quality(){
 
-        }
+       let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/data.csv");
+        let mut incols = Vec::new();
+        incols.push(0usize);
+        incols.push(1);
+        incols.push(2);
+
+        let mut outcols = Vec::new();
+        outcols.push(3usize);
+                    
+       let ds =  Dataset::read_from_csvfile(&path, &incols, &outcols);
+       
+       println!("dataset = {:?}", ds);
+
+       println!("--------------------------------");
+
+       println!("shuffled ataset = {:?}", ds.get_shuffled());            
+        
+       let layers:Vec<usize> = vec!{2,1,1};
+       let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
+       let mut nnet = Neuralnet::new(layers, activations);        
+
 }
 
 fn getdata_in(n : usize)->Vec<Vec<f64>> {
@@ -125,34 +132,6 @@ fn getdata_out(data : &Vec<Vec<f64>>)->Vec<Vec<f64>> {
         //println!("cos = {}",positions[i][0]);
     }
     positions
-}
-
-fn read_from_file(path : &str)-> Result< Vec<Vec<f64>>, Box<dyn Error>> {
-    
-    let mut reader = csv::Reader::from_path(path)?;
-    
-    let headers = reader.headers()?;
-    
-    println!("Headers :  {:?}", headers);
-
-    let mut data = Vec::new();
-
-    for result in reader.records() {
-
-        let record = result?;
-
-        if record.is_empty()==false {
-            let l = record.len();
-            let mut row = vec![0.0f64; l];
-
-            for i in 0..l {
-                row[i] = record[i].parse()?; 
-            }
-            data.push(row)            
-        }       
-    }
-
-    Ok(data)
 }
 
 
