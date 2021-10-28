@@ -14,9 +14,9 @@ fn main() {
 
     let layers:Vec<usize> = vec!{2,3,1};
     let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
-    let mut nn = Neuralnet::new(layers, activations);
+    let mut nnet = Neuralnet::new(layers, activations);
     
-    let mut wb = vec![0.0f64; nn.get_weights_biases_count()];
+    let mut wb = vec![0.0f64; nnet.get_weights_biases_count()];
 
     for i in 0..wb.len() {
        wb[i] = i as f64;
@@ -47,9 +47,9 @@ fn main() {
       let ub : f64 = 1.00;
       let lb : f64 = -1.00;
 
-      let mut eoann = SequentialEOTrainer::new(&mut nn, data_in, data_out,p_size, k_max, lb, ub);
+      let mut eoann = SequentialEOTrainer::new(&mut nnet, data_in, data_out,p_size, k_max, lb, ub);
       
-      let (_a, _b, _c, nnet) = eoann.learn();
+      let (_a, _wbi, _c) = eoann.learn();
       
       println!("_");
       
@@ -57,11 +57,17 @@ fn main() {
       
       println!("_");
 
-      println!("Best [Wi, bi] : {:?}", _b );
+      println!("Best [Wi, bi] : {:?}", _wbi );
       //println!("c : {:?}", _c );   
-
-      let mut bestnnet = nn; //nnet.clone();
-      bestnnet.update_weights_biases(&_b);  
+      
+       {
+        println!("---------------------TESTING-----------------------"); 
+        let mut bestnnet = nnet.clone();
+        bestnnet.update_weights_biases(&_wbi);  
+        
+       } 
+      
+      
 
       let mut test = vec![0.0f64; 2];
       test[0] = 0.2;
@@ -69,13 +75,13 @@ fn main() {
       println!("--------------------------------------------"); 
       println!("_");
 
-      println!("Real [Wi] = {:?}", bestnnet.weights);
+      println!("Real [Wi] = {:?}", nnet.weights);
 
-      println!("Real [bi] = {:?}", bestnnet.biases);
+      println!("Real [bi] = {:?}", nnet.biases);
 
       println!("_");
       
-      println!("testing result Cos(...) {:?} --> {:?}", test, bestnnet.feed_forward(&test));
+      println!("testing result Cos(...) {:?} --> {:?}", test, nnet.feed_forward(&test));
     
      
 

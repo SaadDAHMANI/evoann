@@ -42,7 +42,7 @@ impl<'a> SequentialEOTrainer <'a> {
 }
 
 
-    pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>, Neuralnet) {
+    pub fn learn(&mut self)->(f64, Vec<f64>, Vec<f64>) {
 
         let incount = self.learn_in.len();
         let outcount = self.expected_learn_out.len();
@@ -51,14 +51,13 @@ impl<'a> SequentialEOTrainer <'a> {
          panic!("Problem with learniong dataset size : count of learning input items must be equals (=) to count of learning output items.");
      }   
 
-     self.dimension = self.neuralnet.get_weights_biases_count();
+     //search the best [Wi, bi] for learning step
+     let (final_err, best_wb, learning_curve) = self.run_seq_eo();
+     
+     //make the best [Wi, bi] solution as neuralnet weights & biases   
+     self.neuralnet.update_weights_biases(&best_wb);
 
-     let (a, b, c) = self.run_seq_eo();
-
-     (a,b,c, self.neuralnet.clone())
-
-     //self.best_weights_biases = b;
-     //self.learning_curve = c;
+     (final_err, best_wb, learning_curve)
 }
 
     fn objectif_fn(&mut self, genome : &Vec<f64>)->f64 {        
