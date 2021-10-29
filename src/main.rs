@@ -53,7 +53,7 @@ fn main() {
       
       println!("_");
       
-      println!("final learning error : {:?}", _a );
+      println!("final learning error : RMSE = {:?}", _a );
       
       println!("_");
 
@@ -88,7 +88,7 @@ fn test_water_quality(){
        let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/data.csv");
         let mut incols = Vec::new();
         incols.push(0);
-        incols.push(1);
+        //incols.push(1);
         //incols.push(2);
         //incols.push(3);
         //incols.push(4);
@@ -100,7 +100,7 @@ fn test_water_quality(){
         //incols.push(2);
 
         let mut outcols = Vec::new();
-        outcols.push(9);
+        outcols.push(0);
                     
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
        let ds = ds0.get_shuffled();
@@ -110,7 +110,7 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(),4,outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(),2,outcols.len()};
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
@@ -119,8 +119,8 @@ fn test_water_quality(){
        
        let p_size : usize = 25;
        let k_max : usize = 1000;
-       let ub : f64 = 5.0;
-       let lb : f64 = -5.0;
+       let ub : f64 = 10.0;
+       let lb : f64 = -10.0;
  
        let mut eoann = SequentialEOTrainer::new(&mut nnet, ds.inputs, ds.outputs, p_size, k_max, lb, ub);
        
@@ -128,15 +128,15 @@ fn test_water_quality(){
        
        println!("_");
        
-       println!("WQ - final learning error : {:?}", _a );
+       println!("WQ - final learning error : RMSE = {:?}", _a );
        
        println!("_"); 
 
        {
         println!("---------------------TESTING-----------------------"); 
-        let mut test = vec![0.0f64; 2];
+        let mut test = vec![0.0f64; 1];
         test[0] = 0.43;
-        test[1] = 0.344;
+        //test[1] = 0.344;
                   
         println!("_");
 
