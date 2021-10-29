@@ -218,15 +218,19 @@ impl Neuralnet {
     pub fn get_weights_biases_count(&self)-> usize {
 		  self.get_weights_count()+ self.get_biases_count()
 	}
-
-	fn compute_learning_error(&mut self, learn_in : &Vec<Vec<f64>>,  expected_learn_out : &Vec<Vec<f64>>)->f64 {
+	///
+	/// Compute error using RMSE formula
+	///
+	fn compute_learning_error_rmse(&mut self, learn_in : &Vec<Vec<f64>>,  expected_learn_out : &Vec<Vec<f64>>)->f64 {
 
         let mut totalerror : f64 = 0.0f64;
         let mut err : f64 =0.0f64;
 
+		let incount = learn_in.len();
+
 		//println!("Wi = {:?}", self.weights);
 
-        for i in 0..learn_in.len() {
+        for i in 0..incount {
 
             let computed = self.feed_forward(&learn_in[i]);
 
@@ -237,7 +241,9 @@ impl Neuralnet {
             totalerror +=err;
         }
 		//println!("err : {}", totalerror);
-        totalerror
+		
+        totalerror = f64::sqrt(totalerror/incount as f64);
+		return totalerror;
     } 
 	
 	

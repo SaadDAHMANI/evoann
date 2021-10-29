@@ -67,7 +67,7 @@ impl<'a> SequentialEOTrainer<'a> {
         self.neuralnet.update_weights_biases(&genome);
         //println!("genome[0] : {:?}", genome[0]);      
 
-        let learn_error : f64 = self.neuralnet.compute_learning_error(&self.learn_in, &self.expected_learn_out); 
+        let learn_error : f64 = self.neuralnet.compute_learning_error_rmse(&self.learn_in, &self.expected_learn_out); 
         //println!("learn_error : {:?}", learn_error);       
         return learn_error;
 }
