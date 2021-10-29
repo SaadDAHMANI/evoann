@@ -88,29 +88,30 @@ fn test_water_quality(){
        let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/data.csv");
         let mut incols = Vec::new();
         incols.push(0);
-        //incols.push(1);
-        //incols.push(2);
-        //incols.push(3);
-        //incols.push(4);
-        //incols.push(5);
-        //incols.push(6);
-        //incols.push(7);
-        //incols.push(8);
+        incols.push(1);
+        incols.push(2);
+        incols.push(3);
+        incols.push(4);
+        incols.push(5);
+        incols.push(6);
+        incols.push(7);
+        incols.push(8);
 
         //incols.push(2);
 
         let mut outcols = Vec::new();
-        outcols.push(0);
+        outcols.push(9);
                     
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
        let ds = ds0.get_shuffled();
+
        //println!("dataset = {:?}", ds);
 
        println!("------------------WAETR QUALITY--------------");
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(),2,outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(),4,outcols.len()};
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
@@ -132,7 +133,7 @@ fn test_water_quality(){
        
        println!("_"); 
 
-       {
+    {
         println!("---------------------TESTING-----------------------"); 
         let mut test = vec![0.0f64; 1];
         test[0] = 0.43;
@@ -146,8 +147,16 @@ fn test_water_quality(){
 
         println!("_");
  
-        println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
-       }
+        //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
+        
+        let result = eoann.compute_out_for2(&ds0.get_shuffled().inputs);
+        
+        for rs in result.iter() {
+            println!("{}", rs[0]);
+        }
+       
+
+    }
 
 }
 
