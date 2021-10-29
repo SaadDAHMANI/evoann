@@ -110,7 +110,7 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(),4,1};
+       let layers:Vec<usize> = vec!{incols.len(),4,outcols.len()};
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
@@ -118,7 +118,7 @@ fn test_water_quality(){
        //println!("Out : {:?}", data_out);
        
        let p_size : usize = 25;
-       let k_max : usize = 2000;
+       let k_max : usize = 1000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
  
