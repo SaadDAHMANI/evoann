@@ -3,7 +3,7 @@ include!("neuralnet.rs");
 include!("activations.rs");
 //include!("eo_trainer.rs");
 include!("seq_eo_trainer.rs");
-include!("csvrw.rs");
+include!("dataset.rs");
 
 //extern crate eoalib;
 //se eoalib::*;
