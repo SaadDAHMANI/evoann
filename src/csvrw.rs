@@ -91,7 +91,10 @@ impl Dataset{
         }
          Ok(data)
     }
-
+   
+    ///
+    /// shuffled data in the intervalle [0, 1] 
+    /// 
     pub fn get_shuffled(&self)->Dataset {
         let mut maxin = Vec::new();
 
@@ -145,4 +148,78 @@ impl Dataset{
 
         return shuffled;
     } 
+
+     ///
+    /// shuffled data in the intervalle [0, 0.9] 
+    /// 
+    pub fn get_shuffled_09(&self)->Dataset {
+        let mut maxin = Vec::new();
+        let mut minin = Vec::new();
+
+        if self.inputs.len()> 0 {
+             maxin = self.inputs[0].clone();
+             minin =self.inputs[0].clone();        
+        }        
+
+        let mut maxout = Vec::new();
+        let mut minout = Vec::new();
+        if self.outputs.len()> 0 {
+             maxout = self.outputs[0].clone();
+             minout = self.outputs[0].clone();
+        }
+        
+        let icountin = self.inputs.len();
+        let jcountin = self.inputs[0].len(); 
+
+        // search min and max values
+        for j in 0.. jcountin {
+            for i in 0..icountin {
+               if maxin[j] < self.inputs[i][j] {
+                   maxin[j] = self.inputs[i][j];
+               }
+               
+               if minin[j] > self.inputs[i][j] {
+                   minin[j] = self.inputs[i][j]
+               }   
+            }   
+        }
+
+        let icountout = self.outputs.len();
+        let jcountout = self.outputs[0].len(); 
+
+         // search min and max values
+        for j in 0.. jcountout {
+            for i in 0..icountout {
+               if maxout[j] < self.outputs[i][j] {
+                     maxout[j]=self.outputs[i][j];
+               }  
+
+               if minout[j] > self.outputs[i][j] {
+                     minout[j]=self.outputs[i][j];
+                }  
+            }   
+        }
+
+        let mut shuffled = self.clone();
+        for i in 0..icountin {
+            for j in 0.. jcountin {
+                if maxin[j] != 0.0 {
+                    shuffled.inputs[i][j]= 0.9 *(shuffled.inputs[i][j]-minin[j])/(maxin[j]-minin[j]); 
+                }                               
+            }
+        }
+        
+        for i in 0..icountout {
+            for j in 0.. jcountout {
+                if maxout[j] != 0.0 {
+                    shuffled.outputs[i][j]= 0.9*(shuffled.outputs[i][j]-minout[j])/(maxout[j]-minout[j]); 
+                }                               
+            }
+        }
+
+        return shuffled;
+    } 
+
+
+
 }
