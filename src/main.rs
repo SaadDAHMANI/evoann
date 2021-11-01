@@ -116,8 +116,8 @@ fn test_water_quality(){
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 10;
-       let k_max : usize = 10;
+       let p_size : usize = 20;
+       let k_max : usize = 1000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
  
@@ -137,7 +137,7 @@ fn test_water_quality(){
            let pathcrv =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_convergenceTrnd.csv");
            let head = String::from("RMSE-Cnvergence_Trend");
            let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
-
+           println!("Writing optimization curve finish.");
         //println!("---------------------TESTING-----------------------"); 
         //let mut test = vec![0.0f64; 1];
         //test[0] = 0.43;

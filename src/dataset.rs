@@ -12,13 +12,12 @@ pub struct Dataset {
     //outputs_headers : &'a mut Vec<String>,
     inputs : Vec<Vec<f64>>,
     outputs : Vec<Vec<f64>>, 
-    file_path : String,
-    
+    file_path : Option<String>,    
 }
 
 impl Dataset{
 
-    pub fn new(inputs : Vec<Vec<f64>>, outputs :Vec<Vec<f64>>, file : String)-> Dataset {
+    pub fn new(inputs : Vec<Vec<f64>>, outputs :Vec<Vec<f64>>, file : Option<String>)-> Dataset {
         Dataset{
             inputs : inputs,
             outputs : outputs, 
@@ -240,6 +239,30 @@ impl Dataset{
         return shuffled;
     } 
 
+    pub fn split_on_2(&self, firstelemntscount : usize)->(Dataset, Dataset) {
+        let totalcount = self.inputs.len();
 
+        let firstcount = usize::min(firstelemntscount, totalcount);
+        
+        let mut datain1 = Vec::new();
+        let mut datain2 = Vec::new();
+        let mut dataout1 = Vec::new();
+        let mut dataout2 = Vec::new();
 
+        for i in 0..firstcount {
+            datain1.push(self.inputs[i].clone());
+            dataout1.push(self.outputs[i].clone());
+        }
+
+        for i in firstcount..totalcount {
+            datain2.push(self.inputs[i].clone());
+            dataout2.push(self.outputs[i].clone());
+        } 
+
+        
+        let ds1 = Dataset::new(datain1, dataout1, None);
+        let ds2 = Dataset::new(datain2, dataout2, None);
+
+        (ds1, ds2)
+    }  
 }
