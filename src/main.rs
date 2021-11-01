@@ -42,7 +42,7 @@ fn main() {
       //println!("In : {:?}", data_in);
       //println!("Out : {:?}", data_out);
       
-      let p_size : usize = 10;
+      let p_size : usize = 5;
       let k_max : usize = 1;
       let ub : f64 = 5.0;
       let lb : f64 = -5.0;
@@ -85,10 +85,9 @@ fn main() {
 
 fn test_water_quality(){
 
-       let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/data.csv");
+        let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset.csv");
         let mut incols = Vec::new();
-        incols.push(0);
-        incols.push(1);
+         //incols.push(0);
         incols.push(2);
         incols.push(3);
         incols.push(4);
@@ -97,10 +96,9 @@ fn test_water_quality(){
         incols.push(7);
         incols.push(8);
 
-        //incols.push(2);
-
+       
         let mut outcols = Vec::new();
-        outcols.push(10);
+        outcols.push(1);
                     
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
        let ds = ds0.get_shuffled();
@@ -112,14 +110,14 @@ fn test_water_quality(){
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
        let layers:Vec<usize> = vec!{incols.len(),4,2,outcols.len()};
-       let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
+       let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 25;
-       let k_max : usize = 1000;
+       let p_size : usize = 10;
+       let k_max : usize = 10;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
  
@@ -133,27 +131,33 @@ fn test_water_quality(){
        
        println!("_"); 
 
-    {
-        println!("---------------------TESTING-----------------------"); 
-        let mut test = vec![0.0f64; 1];
-        test[0] = 0.43;
+        {     
+
+           println!("Writing optimization curve ...");
+           let pathcrv =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_convergenceTrnd.csv");
+           let head = String::from("RMSE-Cnvergence_Trend");
+           let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
+
+        //println!("---------------------TESTING-----------------------"); 
+        //let mut test = vec![0.0f64; 1];
+        //test[0] = 0.43;
         //test[1] = 0.344;
                   
-        println!("_");
+        //println!("_");
 
         //println!("Real [Wi] = {:?}", nnet.weights);
 
         //println!("Real [bi] = {:?}", nnet.biases);
 
-        println!("_");
+        //println!("_");
  
         //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
         
-        let result = eoann.compute_out_for2(&ds0.get_shuffled().inputs);
+        //let result = eoann.compute_out_for2(&ds0.get_shuffled().inputs);
         
-        for rs in result.iter() {
-            println!("{}", rs[0]);
-        }
+        //for rs in result.iter() {
+         //   println!("{}", rs[0]);
+        //}
        
 
     }

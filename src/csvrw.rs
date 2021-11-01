@@ -1,6 +1,8 @@
 //use std::io;
 
 use csv;
+use csv::Writer;
+
 //use serde::de::DeserializeOwned;
 //use serde::Deserialize;
 
@@ -65,7 +67,7 @@ impl Dataset{
         return ds;
     }
 
-    fn readall_from_file(path : &str)-> Result< Vec<Vec<f64>>, Box<dyn Error>> {
+    pub fn readall_from_file(path : &str)-> Result< Vec<Vec<f64>>, Box<dyn Error>> {
     
          let mut reader = csv::Reader::from_path(path)?;
     
@@ -92,6 +94,24 @@ impl Dataset{
          Ok(data)
     }
    
+    pub fn write_to_csv(path : &String, header : &Option<String>, data : &Vec<f64>)-> Result<(), Box<dyn Error> > {
+        let mut wtr = Writer::from_path(path)?;
+
+        match header {
+            Some(header) => wtr.write_record(&[header])?,
+            None => (),
+        };
+
+        for i in 0..data.len() {
+             wtr.write_record(&[data[i].to_string()])?;
+        }
+
+        wtr.flush()?;
+
+        Ok(())   
+    }
+
+
     ///
     /// shuffled data in the intervalle [0, 1] 
     /// 
