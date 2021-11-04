@@ -12,9 +12,9 @@ use std::error::Error;
 fn main() {
     println!("Hello, Evo-ANN!");
 
-    let layers:Vec<usize> = vec!{2,1,1};
-    let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
-    let mut nnet = Neuralnet::new(layers, activations);
+    //let layers:Vec<usize> = vec!{2,1,1};
+    //let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
+    //let mut nnet = Neuralnet::new(layers, activations);
     
     //let mut wb = vec![0.0f64; nnet.get_weights_biases_count()];
 
@@ -35,46 +35,46 @@ fn main() {
     println!("---------------------------------------------");
       
 
-      let n : usize = 10;
-      let  data_in = getdata_in(n);
-      let  data_out = getdata_out(&data_in);
+      //let n : usize = 10;
+      //let  data_in = getdata_in(n);
+      //let  data_out = getdata_out(&data_in);
       
       //println!("In : {:?}", data_in);
       //println!("Out : {:?}", data_out);
       
-      let p_size : usize = 5;
-      let k_max : usize = 1;
-      let ub : f64 = 5.0;
-      let lb : f64 = -5.0;
+      //let p_size : usize = 5;
+      //let k_max : usize = 1;
+      //let ub : f64 = 5.0;
+      //let lb : f64 = -5.0;
 
-      let mut eoann = SequentialEOTrainer::new(&mut nnet, data_in, data_out,p_size, k_max, lb, ub);
+      //let mut eoann = SequentialEOTrainer::new(&mut nnet, data_in, data_out,p_size, k_max, lb, ub);
       
-      let (_a, _wbi, _c) = eoann.learn();
+      //let (_a, _wbi, _c) = eoann.learn();
       
-      println!("_");
+      //println!("_");
       
-      println!("final learning error : RMSE = {:?}", _a );
+      //println!("final learning error : RMSE = {:?}", _a );
       
-      println!("_");
+      //println!("_");
 
-      println!("Best [Wi, bi] : {:?}", _wbi );
+      //println!("Best [Wi, bi] : {:?}", _wbi );
       //println!("c : {:?}", _c );   
       
         {
-             println!("---------------------TESTING-----------------------"); 
-             let mut test = vec![0.0f64; 2];
-             test[0] = 0.5;
-             test[1] = 0.9;
+             //println!("---------------------TESTING-----------------------"); 
+             //let mut test = vec![0.0f64; 2];
+             //test[0] = 0.5;
+             //test[1] = 0.9;
                        
-             println!("_");
+             //println!("_");
 
-             println!("Real [Wi] = {:?}", nnet.weights);
+             //println!("Real [Wi] = {:?}", nnet.weights);
 
-             println!("Real [bi] = {:?}", nnet.biases);
+             //println!("Real [bi] = {:?}", nnet.biases);
 
-             println!("_");
+             //println!("_");
       
-             println!("[nnet] -> testing result Cos({:?}) --> {:?}", test, nnet.feed_forward(&test));              
+             //println!("[nnet] -> testing result Cos({:?}) --> {:?}", test, nnet.feed_forward(&test));              
         } 
 
         {
@@ -95,13 +95,15 @@ fn test_water_quality(){
         incols.push(6);
         incols.push(7);
         incols.push(8);
-
        
         let mut outcols = Vec::new();
         outcols.push(1);
-                    
+        
+        let learn_part : usize = 127;
+        
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
-       let ds = ds0.get_shuffled();
+
+       let (ds_learn, _ds_test) = ds0.get_shuffled().split_on_2(learn_part);
 
        //println!("dataset = {:?}", ds);
 
@@ -109,19 +111,19 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(),4,2,outcols.len()};
-       let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Sigmoid, Activations::Linear};
+       let layers:Vec<usize> = vec!{incols.len(), 4 , outcols.len()};
+       let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 20;
-       let k_max : usize = 1000;
+       let p_size : usize = 70;
+       let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
  
-       let mut eoann = SequentialEOTrainer::new(&mut nnet, ds.inputs, ds.outputs, p_size, k_max, lb, ub);
+       let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
        
        let (_a, _wbi, _c) = eoann.learn();
        
@@ -133,27 +135,32 @@ fn test_water_quality(){
 
         {     
 
-           println!("Writing optimization curve ...");
-           let pathcrv =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_convergenceTrnd.csv");
-           let head = String::from("RMSE-Cnvergence_Trend");
-           let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
-           println!("Writing optimization curve finish.");
-        //println!("---------------------TESTING-----------------------"); 
-        //let mut test = vec![0.0f64; 1];
-        //test[0] = 0.43;
-        //test[1] = 0.344;
-                  
-        //println!("_");
-
-        //println!("Real [Wi] = {:?}", nnet.weights);
-
-        //println!("Real [bi] = {:?}", nnet.biases);
-
-        //println!("_");
- 
-        //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
+             //println!("Writing optimization curve ...");
+             //let pathcrv =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_convergenceTrnd.csv");
+             //let head = String::from("RMSE-Cnvergence_Trend");
+             //let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
+             //println!("Writing optimization curve finish.");
         
-        //let result = eoann.compute_out_for2(&ds0.get_shuffled().inputs);
+             //println!("---------------------TESTING-----------------------"); 
+         
+           //println!("Real [Wi] = {:?}", nnet.weights);
+
+            //println!("Real [bi] = {:?}", nnet.biases);
+
+            //println!("_");
+  
+             //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
+         
+             //let comuted_test = eoann.compute_out_for2(&ds_test.inputs);
+            
+             //println!("Writing test results ...");
+             //let pathtest =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_test_results.csv");
+             //let mut headers= Vec::new();
+             //headers.push(String::from("Computed CE"));
+
+             //let _error = Dataset::write_to_csv2(&pathtest, &Some(headers), &comuted_test);
+             //println!("Writing test results finish.");
+        
         
         //for rs in result.iter() {
          //   println!("{}", rs[0]);

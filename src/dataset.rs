@@ -61,7 +61,7 @@ impl Dataset{
         let ds = Dataset {
             inputs : input,
             outputs : output,
-            file_path : flepath,
+            file_path : Some(flepath),
         };
         return ds;
     }
@@ -106,9 +106,29 @@ impl Dataset{
         }
 
         wtr.flush()?;
-
+        
         Ok(())   
     }
+
+    pub fn write_to_csv2(path : &String, headers : &Option<Vec<String>>, data : &Vec<Vec<f64>>)-> Result<(), Box<dyn Error> > {
+        let mut wtr = Writer::from_path(path)?;
+
+        match headers {
+            Some(header) => wtr.write_record(header.iter())?,
+            None => (),
+        };
+
+        for row in data {
+             let cols_str: Vec<_> = row.iter().map(ToString::to_string).collect();   
+             //let line = cols_str.join(",");
+             wtr.write_record(cols_str.iter())?;
+        }
+
+        wtr.flush()?;
+        
+        Ok(())   
+    }
+
 
 
     ///
@@ -265,4 +285,16 @@ impl Dataset{
 
         (ds1, ds2)
     }  
+
+    pub fn get_rmse(ds1 : &Vec<f64>, ds2 : &Vec<f64>)->f64 {
+         let mut rmse : f64 =0.0;
+         let count = usize::min(ds1.len(), ds2.len());
+         
+         for i in 0..count {
+            rmse += f64::powi(ds1[i]- ds2[i], 2);
+         }
+         rmse = rmse /count as f64;
+         rmse = f64::sqrt(rmse); 
+         rmse
+    }
 }
