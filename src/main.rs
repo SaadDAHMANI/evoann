@@ -103,7 +103,7 @@ fn test_water_quality(){
         
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
-       let (ds_learn, _ds_test) = ds0.get_shuffled().split_on_2(learn_part);
+       let (ds_learn, ds_test) = ds0.get_shuffled().split_on_2(learn_part);
 
        //println!("dataset = {:?}", ds);
 
@@ -129,9 +129,10 @@ fn test_water_quality(){
        
        println!("_");
        
-       println!("WQ - final learning error : RMSE = {:?}", _a );
+       println!("WQ - final Learning error : RMSEl = {:?}", _a );
        
        println!("_"); 
+
 
         {     
 
@@ -151,7 +152,13 @@ fn test_water_quality(){
   
              //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
          
-             //let comuted_test = eoann.compute_out_for2(&ds_test.inputs);
+             let computed_test = eoann.compute_out_for2(&ds_test.inputs);
+
+             let computed = convert2vector(&computed_test);
+             let observed = convert2vector(&ds_test.outputs);
+             let rmse_test = Dataset::compute_rmse(&computed, &observed);
+             println!("WQ - final Testing error : RMSEt = {:?}", rmse_test);
+
             
              //println!("Writing test results ...");
              //let pathtest =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_test_results.csv");
@@ -199,6 +206,14 @@ fn getdata_out(data : &Vec<Vec<f64>>)->Vec<Vec<f64>> {
         //println!("cos = {}",positions[i][0]);
     }
     positions
+}
+
+fn convert2vector(data : &Vec<Vec<f64>>)-> Vec<f64> {
+    let mut vect = Vec::new();
+    for i in 0..data.len() {
+        vect.push(data[i][0]);
+    }
+    vect
 }
 
 
