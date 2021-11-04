@@ -286,15 +286,22 @@ impl Dataset{
         (ds1, ds2)
     }  
 
-    pub fn get_rmse(ds1 : &Vec<f64>, ds2 : &Vec<f64>)->f64 {
+    pub fn get_rmse(ds1 : &Vec<f64>, ds2 : &Vec<f64>)-> Option<f64> {
          let mut rmse : f64 =0.0;
-         let count = usize::min(ds1.len(), ds2.len());
          
-         for i in 0..count {
-            rmse += f64::powi(ds1[i]- ds2[i], 2);
+         let count = usize::min(ds1.len(), ds2.len());
+
+         if count > 0 {
+             for i in 0..count {
+                 rmse += f64::powi(ds1[i]- ds2[i], 2);
+             }
+             rmse = rmse /count as f64;
+             rmse = f64::sqrt(rmse); 
+             Some(rmse)
          }
-         rmse = rmse /count as f64;
-         rmse = f64::sqrt(rmse); 
-         rmse
+         else {
+             None
+         }
+         
     }
 }
