@@ -122,7 +122,7 @@ fn test_water_quality(){
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 30;
+       let p_size : usize = 50;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
@@ -165,6 +165,8 @@ fn test_water_quality(){
              let rmse_test = Dataset::compute_rmse(&computed, &observed);
              println!("WQ - final Testing error : RMSEt = {:?}", rmse_test);
 
+             let _r2t =   Dataset::compute_determination_r2(&computed, &observed);
+             println!("WQ - final Testing determination coef : R2t = {:?}", _r2t);   
             
              //println!("Writing test results ...");
              //let pathtest =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_test_results.csv");
