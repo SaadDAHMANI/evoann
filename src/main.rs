@@ -85,7 +85,9 @@ fn main() {
 
 fn test_water_quality(){
 
+        //let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/2Qm1.csv");
         let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset.csv");
+        
         let mut incols = Vec::new();
          //incols.push(0);
         incols.push(2);
@@ -105,20 +107,22 @@ fn test_water_quality(){
 
        let (ds_learn, ds_test) = ds0.get_shuffled().split_on_2(learn_part);
 
+       let lcount = ds_learn.inputs.len();
+
        //println!("dataset = {:?}", ds);
 
        println!("------------------WAETR QUALITY--------------");
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(), 4 , outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(),12, outcols.len()};
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 70;
+       let p_size : usize = 30;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
@@ -127,6 +131,8 @@ fn test_water_quality(){
        
        let (_a, _wbi, _c) = eoann.learn();
        
+       println!("_Learning items count : {:?}",lcount);
+
        println!("_");
        
        println!("WQ - final Learning error : RMSEl = {:?}", _a );

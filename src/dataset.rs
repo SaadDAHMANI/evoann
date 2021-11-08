@@ -304,4 +304,44 @@ impl Dataset{
          }
          
     }
+
+    pub fn compute_correlation_r(ds1 : &Vec<f64>, ds2 : &Vec<f64>)->Option<f64> {
+        let mut sum1 : f64 = 0.0;
+        let mut sum2 : f64 = 0.0;
+        let mut av1 : f64 = 0.0;
+        let mut av2 : f64 = 0.0;
+        let mut numerator : f64 = 0.0;
+        let count = usize::min(ds1.len(), ds2.len());
+        
+        if count> 0 {
+            for i in 0..count {
+                av1 += ds1[i];
+                av2 += ds1[i];            
+            };
+
+            av1 = av1/count as f64;
+            av2 = av2/count as f64;
+
+            for i in 0..count {
+                sum1 += f64::powi(ds1[i] - av1, 2);
+                sum2 += f64::powi(ds2[i] - av2, 2);
+                numerator += (ds1[i] - av1)*(ds2[i] - av2) ;                
+            };
+            let denomenator = f64::sqrt(sum1*sum2);
+             
+            let rvalue = numerator/denomenator;
+            
+            Some(rvalue)
+        }
+        else {None}
+    }
+
+    pub fn compute_determination_r2(ds1 : &Vec<f64>, ds2 : &Vec<f64>)->Option<f64>{
+       let r2 = match Dataset::compute_correlation_r(&ds1, &ds2) {
+            Some(r)=> Some(f64::powi(r,2)),
+            None => None,
+        };
+        r2
+    } 
+
 }
