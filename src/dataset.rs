@@ -345,3 +345,69 @@ impl Dataset{
     } 
 
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+   
+    #[test]
+    fn compute_correlation_r_test1() {
+          let mut ds1 = Vec::new();
+          ds1.push(1.2f64);
+          ds1.push(2.2f64);
+          ds1.push(3.2f64);  
+          ds1.push(2.2f64);
+          ds1.push(10.2f64);  
+
+          let ds2 = ds1.clone();
+           
+          assert_eq!(Dataset::compute_correlation_r(&ds1, &ds2), Some(1.0));
+    }
+
+    #[test]
+    fn compute_correlation_r_test2() {
+          let mut ds1 = Vec::new();
+          ds1.push(1.2f64);
+          ds1.push(2.2f64);
+          ds1.push(3.2f64);  
+          ds1.push(2.2f64);
+          ds1.push(10.2f64);  
+
+          let ds2 = ds1.clone();
+
+          ds1[3]=4.2;
+           
+          assert_ne!(Dataset::compute_correlation_r(&ds1, &ds2), Some(1.0));
+    }
+
+    #[test]
+    fn compute_correlation_rmse_test1() {
+        let mut ds1 = Vec::new();
+          ds1.push(1.2f64);
+          ds1.push(2.2f64);
+          ds1.push(3.2f64);  
+          ds1.push(2.2f64);
+          ds1.push(10.2f64);  
+
+          let ds2 = ds1.clone();
+           
+          assert_eq!(Dataset::compute_rmse(&ds1, &ds2), Some(0.0));
+    }
+
+    #[test]
+    fn compute_correlation_rmse_test2() {
+        let mut ds1 = Vec::new();
+          ds1.push(1.2f64);
+          ds1.push(2.2f64);
+          ds1.push(3.2f64);  
+          ds1.push(2.2f64);
+          ds1.push(10.2f64);  
+
+          let ds2 = ds1.clone();
+
+          ds1[3]=5.2;
+           
+          assert_ne!(Dataset::compute_rmse(&ds1, &ds2), Some(0.0));
+    }
+}
