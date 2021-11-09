@@ -405,6 +405,27 @@ mod tests {
         assert_eq!(Dataset::compute_correlation_r(&ds1, &ds2), Some(0.9819805060619656));
   }
 
+  #[test]
+  fn compute_correlation_r_test4() {
+      let mut ds1 = Vec::new();
+      ds1.push(1.0f64);
+      ds1.push(2.0f64);
+      ds1.push(3.0f64);  
+      ds1.push(10.0f64);
+      ds1.push(11.0f64); 
+      ds1.push(12.0f64);   
+
+      let mut ds2 = Vec::new();
+      ds2.push(2.0f64);
+      ds2.push(2.0f64);
+      ds2.push(3.0f64);  
+      ds2.push(4.0f64);
+      ds2.push(5.0f64); 
+      ds2.push(6.0f64);   
+      
+      assert_eq!(Dataset::compute_correlation_r(&ds1, &ds2), Some(0.9533961104526778));
+}
+
     #[test]
     fn compute_correlation_rmse_test1() {
         let mut ds1 = Vec::new();
@@ -452,6 +473,26 @@ mod tests {
         assert_eq!(Dataset::compute_rmse(&ds1, &ds2), Some(0.408248290463863));
   }
 
+  #[test]
+  fn compute_rmse_test4() {
+      let mut ds1 = Vec::new();
+      ds1.push(1.0f64);
+      ds1.push(2.0f64);
+      ds1.push(3.0f64);  
+      ds1.push(10.0f64);
+      ds1.push(11.0f64); 
+      ds1.push(12.0f64);   
+
+      let mut ds2 = Vec::new();
+      ds2.push(2.0f64);
+      ds2.push(2.0f64);
+      ds2.push(3.0f64);  
+      ds2.push(4.0f64);
+      ds2.push(5.0f64); 
+      ds2.push(6.0f64);   
+      
+      assert_eq!(Dataset::compute_rmse(&ds1, &ds2), Some(4.262237284181474));
+}
 
    
 
