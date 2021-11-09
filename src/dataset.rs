@@ -311,29 +311,36 @@ impl Dataset{
         let mut av1 : f64 = 0.0;
         let mut av2 : f64 = 0.0;
         let mut numerator : f64 = 0.0;
-        let count = usize::min(ds1.len(), ds2.len());
-        
-        if count> 0 {
-            for i in 0..count {
-                av1 += ds1[i];
-                av2 += ds1[i];            
-            };
 
-            av1 = av1/count as f64;
-            av2 = av2/count as f64;
-
-            for i in 0..count {
-                sum1 += f64::powi(ds1[i] - av1, 2);
-                sum2 += f64::powi(ds2[i] - av2, 2);
-                numerator += (ds1[i] - av1)*(ds2[i] - av2) ;                
-            };
-            let denomenator = f64::sqrt(sum1*sum2);
-             
-            let rvalue = numerator/denomenator;
-            
-            Some(rvalue)
+        let count = ds1.len();
+       
+        if ds1.len() == ds2.len() {
+            if count > 0 {
+                for i in 0..count {
+                    av1 += ds1[i];
+                    av2 += ds2[i];            
+                };
+    
+                av1 = av1/count as f64;
+                av2 = av2/count as f64;
+    
+                for i in 0..count {
+                    sum1 += f64::powi(ds1[i] - av1, 2);
+                    sum2 += f64::powi(ds2[i] - av2, 2);
+                    numerator += (ds1[i] - av1)*(ds2[i] - av2) ;                
+                };
+                let denomenator = f64::sqrt(sum1*sum2);
+                 
+                let rvalue = numerator/denomenator;
+                
+                Some(rvalue)
+            }
+            else {None}
         }
-        else {None}
+        else {
+            None
+        }
+       
     }
 
     pub fn compute_determination_r2(ds1 : &Vec<f64>, ds2 : &Vec<f64>)->Option<f64>{
@@ -382,6 +389,23 @@ mod tests {
     }
 
     #[test]
+    fn compute_correlation_r_test3() {
+        let mut ds1 = Vec::new();
+        ds1.push(1.0f64);
+        ds1.push(2.0f64);
+        ds1.push(3.0f64);  
+        ds1.push(4.0f64);
+        ds1.push(5.0f64); 
+        ds1.push(6.0f64);   
+
+        let ds2 = ds1.clone();
+
+        ds1[0]=2.0;
+         
+        assert_eq!(Dataset::compute_correlation_r(&ds1, &ds2), Some(0.9819805060619656));
+  }
+
+    #[test]
     fn compute_correlation_rmse_test1() {
         let mut ds1 = Vec::new();
           ds1.push(1.2f64);
@@ -410,4 +434,25 @@ mod tests {
            
           assert_ne!(Dataset::compute_rmse(&ds1, &ds2), Some(0.0));
     }
+
+    #[test]
+    fn compute_correlation_rmse_test3() {
+        let mut ds1 = Vec::new();
+        ds1.push(1.0f64);
+        ds1.push(2.0f64);
+        ds1.push(3.0f64);  
+        ds1.push(4.0f64);
+        ds1.push(5.0f64); 
+        ds1.push(6.0f64);   
+
+        let ds2 = ds1.clone();
+
+        ds1[0]=2.0;
+         
+        assert_eq!(Dataset::compute_rmse(&ds1, &ds2), Some(0.408248290463863));
+  }
+
+
+   
+
 }

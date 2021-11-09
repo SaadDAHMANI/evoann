@@ -117,14 +117,14 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(),12, outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(),15, outcols.len()};
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 70;
+       let p_size : usize = 30;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
@@ -163,8 +163,9 @@ fn test_water_quality(){
              let computedlearn = convert2vector(&computed_learn);
              let observedlearn = convert2vector(&ds_learn2.outputs);   
              let _r2l =   Dataset::compute_determination_r2(&computedlearn, &observedlearn);
-             println!("WQ - final Learning determination coef : R2l = {:?}", _r2l);   
 
+             println!("WQ - final Learning determination coef. : R2l = {:?}", _r2l);   
+             println!("_");   
          
              let computed_test = eoann.compute_out_for2(&ds_test.inputs);
 
