@@ -8,6 +8,7 @@ include!("dataset.rs");
 //extern crate eoalib;
 //se eoalib::*;
 use std::error::Error;
+use std::time::{Duration, Instant};
 
 fn main() {
     println!("Hello, Evo-ANN!");
@@ -115,6 +116,8 @@ fn test_water_quality(){
 
        println!("------------------WAETR QUALITY--------------");
 
+       let chronos = Instant::now();
+
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
        let layers:Vec<usize> = vec!{incols.len(),15, outcols.len()};
@@ -124,7 +127,7 @@ fn test_water_quality(){
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 30;
+       let p_size : usize = 70;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
@@ -190,6 +193,8 @@ fn test_water_quality(){
          //   println!("{}", rs[0]);
         //}
        
+        let duration = chronos.elapsed();
+        println!("End computation in : {:?}.", duration);
 
     }
 
