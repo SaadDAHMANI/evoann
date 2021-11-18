@@ -95,9 +95,9 @@ fn test_water_quality(){
         incols.push(3);
         incols.push(4);
         incols.push(5);
-        //incols.push(6);
-        //incols.push(7);
-        //incols.push(8);
+        incols.push(6);
+        incols.push(7);
+        incols.push(8);
        
         let mut outcols = Vec::new();
         outcols.push(1);
@@ -107,7 +107,6 @@ fn test_water_quality(){
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
        let (ds_learn, ds_test) = ds0.get_shuffled().split_on_2(learn_part);
-
        let lcount = ds_learn.inputs.len();
 
        let ds_learn2 = ds_learn.clone();
@@ -120,7 +119,7 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(), 3, outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(), 2, outcols.len()};
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
@@ -128,11 +127,16 @@ fn test_water_quality(){
        //println!("Out : {:?}", data_out);
        
        let p_size : usize = 30;
-       let k_max : usize = 4000;
+       let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
  
        let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+       // set EO params ----------
+       eoann.a1 = 4.0; //2.0;
+       eoann.a2 = 0.1; //1.0; 
+       eoann.gp = 0.5; //0.5;
+       //-------------------------
        
        let (_a, _wbi, _c) = eoann.learn();
        

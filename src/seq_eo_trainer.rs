@@ -15,6 +15,9 @@ pub struct SequentialEOTrainer<'a>{
      max_iterations : usize,
      upper_bound : f64,
      lower_bound : f64,
+     a1 : f64,
+     a2 : f64,
+     gp : f64, 
      //final_leran_error : f64,
      learn_in : Vec<Vec<f64>>,
      expected_learn_out : Vec<Vec<f64>>,
@@ -34,6 +37,9 @@ impl<'a> SequentialEOTrainer<'a> {
              lower_bound : lb,
              learn_in : learnin,
              expected_learn_out : learnout,
+             a1 : 2.0,
+             a2 : 1.0,
+             gp : 0.5,
          };
 
          newtrainer.dimension = newtrainer.neuralnet.get_weights_biases_count();

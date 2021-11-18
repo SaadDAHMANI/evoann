@@ -46,12 +46,6 @@ impl Trainer {
         return learn_error;
     }
 
-
-
-
-
-
-
 }
 
 
