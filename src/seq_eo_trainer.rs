@@ -128,9 +128,9 @@ impl<'a> SequentialEOTrainer<'a> {
         // a1=2;
         // a2=1;
         // GP=0.5;
-        let a1 : f64 = 2.0;
-        let a2 : f64 = 1.0;
-        let gp : f64 = 0.5;
+        let a1 = self.a1; //: f64 = 2.0;
+        let a2 = self.a2; //: f64 = 1.0;
+        let gp = self.gp; //: f64 = 0.5;
     
          // to store agents fitness values
         let mut fitness = vec![0.0f64; self.particles];
