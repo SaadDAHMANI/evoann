@@ -119,28 +119,30 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(), 2, outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(), 5, outcols.len()};
+       let annstruct = layers.clone();
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 30;
+       let p_size : usize = 50;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
  
        let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
        // set EO params ----------
-       eoann.a1 = 4.0; //2.0;
-       eoann.a2 = 0.1; //1.0; 
-       eoann.gp = 0.5; //0.5;
+       eoann.a1 = 2.0; 
+       eoann.a2 = 1.0;  
+       eoann.gp = 0.5;
        //-------------------------
        
        let (_a, _wbi, _c) = eoann.learn();
        
        println!("_Learning items count : {:?}",lcount);
+       println!("*Population-size : {},  *ANN-Struct :{:?}", p_size, annstruct);
 
        println!("_");
        
