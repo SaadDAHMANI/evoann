@@ -103,6 +103,7 @@ impl Dataset{
 
         for i in 0..data.len() {
              wtr.write_record(&[data[i].to_string()])?;
+            
         }
 
         wtr.flush()?;
