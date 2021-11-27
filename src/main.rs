@@ -218,11 +218,13 @@ fn test_water_quality_loop(){
 
     let mut result_values = Vec::new();
     let mut hidden_layer : usize=0; 
+
+    let rootpath = String::from("/home/sd/Documents/AppDev/Rust/evoann/data/"); 
     
     for psize in pop_sizes.into_iter() {
      
     //let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/2Qm1.csv");
-    let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset.csv");
+    let path =format!("{}dataset.csv",rootpath);
     
     let mut incols = Vec::new();
      //incols.push(0);
@@ -348,7 +350,7 @@ fn test_water_quality_loop(){
 
     }
     
-    let mut file_path =format!("/home/sd/Documents/AppDev/Rust/evoann/data/result_HL{:?}_.csv", hidden_layer);
+    let file_path =format!("{}result_HL{:?}_.csv", rootpath, hidden_layer);
          let mut headers = Vec::new();
          headers.push(String::from("RMSEl"));         
          headers.push(String::from("RMSEt"));
