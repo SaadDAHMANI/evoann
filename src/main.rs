@@ -9,7 +9,7 @@ include!("dataset.rs");
 //se eoalib::*;
 use std::error::Error;
 use std::time::{Duration, Instant};
-use beep::beep;
+
 
 fn main() {
     println!("Hello, Evo-ANN!");
@@ -82,7 +82,7 @@ fn main() {
         {
             //test_water_quality();
             test_water_quality_loop();
-            beep(440);
+           
             
         }
 
