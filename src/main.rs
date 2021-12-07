@@ -2,13 +2,17 @@
 include!("neuralnet.rs");
 include!("activations.rs");
 //include!("eo_trainer.rs");
-include!("seq_eo_trainer.rs");
 include!("dataset.rs");
+include!("solution.rs");
+include!("common.rs");
+include!("seq_eo_trainer.rs");
+include!("seq_pso_trainer.rs");
 
 //extern crate eoalib;
 //se eoalib::*;
 use std::error::Error;
 use std::time::{Duration, Instant};
+
 
 
 fn main() {
@@ -80,9 +84,8 @@ fn main() {
         } 
 
         {
-            //test_water_quality();
-            test_water_quality_loop();
-           
+            test_water_quality();
+            //test_water_quality_loop();           
             
         }
 
@@ -131,16 +134,22 @@ fn test_water_quality(){
        //println!("In : {:?}", data_in);
        //println!("Out : {:?}", data_out);
        
-       let p_size : usize = 50;
+       let p_size : usize = 30;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
- 
-       let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+
+       //let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+       let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
        // set EO params ----------
-       eoann.a1 = 2.0; 
-       eoann.a2 = 1.0;  
-       eoann.gp = 0.5;
+       //eoann.a1 = 2.0; 
+       //eoann.a2 = 1.0;  
+       //eoann.gp = 0.5;
+       //-------------------------
+               // set EO params ----------
+       eoann.c1 = 2.0; 
+       eoann.c2 = 2.0;  
+       //eoann.gp = 0.5;
        //-------------------------
        
        let (_a, _wbi, _c) = eoann.learn();
@@ -362,9 +371,7 @@ fn test_water_quality_loop(){
          let _error = Dataset::write_to_csv2(&file_path, &Some(headers), &result_values);  
     println!("End saving.");
 
-
 }
-
 
 
 fn getdata_in(n : usize)->Vec<Vec<f64>> {
@@ -405,6 +412,11 @@ fn convert2vector(data : &Vec<Vec<f64>>)-> Vec<f64> {
     vect
 }
 
+
+pub enum TrainerAlgo{
+    EO,
+    PSO,
+}
 
 
 

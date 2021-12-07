@@ -2,10 +2,10 @@
 // Saad Dahmani (sd.dahmani2000@gmail.com; s.dahmani@univ-bouira.dz)
 // https://github.com/SaadDAHMANI/equilibrium_optimizer
 //----------------------------------------------------------------------------------
-extern crate rand;
+//extern crate rand;
 //extern crate rayon;
-use rand::distributions::Uniform;
-use rand::distributions::Distribution;
+//use rand::distributions::Uniform;
+//use rand::distributions::Distribution;
 //use rayon::prelude::*;
 
 pub struct SequentialEOTrainer<'a>{
