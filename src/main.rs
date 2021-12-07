@@ -268,29 +268,35 @@ fn test_water_quality_loop(){
 
    //println!("shuffled ataset = {:?}", ds.get_shuffled());  
   
-         let layers:Vec<usize> = vec!{incols.len(), 11, outcols.len()};
-         let annstruct = layers.clone();
-         hidden_layer=layers[1].clone();
+     let layers:Vec<usize> = vec!{incols.len(), 5, outcols.len()};
+     let annstruct = layers.clone();
+     hidden_layer=layers[1].clone();
 
-         let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
-         let mut nnet = Neuralnet::new(layers, activations); 
+     let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
+     let mut nnet = Neuralnet::new(layers, activations); 
 
-
-                 
+               
    //println!("In : {:?}", data_in);
    //println!("Out : {:?}", data_out);
    
    let p_size : usize = psize;
-   let k_max : usize = 5;
+   let k_max : usize = 3000;
    let ub : f64 = 5.0;
    let lb : f64 = -5.0;
 
-   let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+   //let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+   let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
    // set EO params ----------
-   eoann.a1 = 2.0; 
-   eoann.a2 = 1.0;  
-   eoann.gp = 0.5;
+   //eoann.a1 = 2.0; 
+   //eoann.a2 = 1.0;  
+   //eoann.gp = 0.5;
    //-------------------------
+          // set EO params ----------
+  eoann.c1 = 2.0; 
+  eoann.c2 = 2.0;  
+  //eoann.gp = 0.5;
+  //-------------------------
+  
    
    let (_a, _wbi, _c) = eoann.learn();
    
