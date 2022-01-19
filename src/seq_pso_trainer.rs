@@ -103,7 +103,8 @@ impl<'a> SequentialPSOTrainer<'a> {
      let c2 :f64 = 2.0;
      let v_max = (ub - lb)* 0.2f64;
      let v_min  = -1.0*v_max;
- 
+    
+     
      
      // PSO algorithm
      

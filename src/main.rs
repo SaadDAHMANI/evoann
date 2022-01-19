@@ -17,11 +17,10 @@ use std::time::{Duration, Instant};
 
 fn main() {
     println!("Hello, Evo-ANN!");
-
+    
     //let layers:Vec<usize> = vec!{2,1,1};
     //let activations:Vec<Activations> = vec!{Activations::TanH, Activations::Linear};
     //let mut nnet = Neuralnet::new(layers, activations);
-    
     //let mut wb = vec![0.0f64; nnet.get_weights_biases_count()];
 
     //for i in 0..wb.len() {
@@ -85,7 +84,7 @@ fn main() {
 
         {
             test_water_quality();
-            //test_water_quality_loop();           
+           // test_water_quality_loop();           
             
         }
 
@@ -97,7 +96,7 @@ fn test_water_quality(){
         let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset.csv");
         
         let mut incols = Vec::new();
-         //incols.push(0);
+        //incols.push(1);
         incols.push(2);
         incols.push(3);
         incols.push(4);
@@ -109,7 +108,7 @@ fn test_water_quality(){
         let mut outcols = Vec::new();
         outcols.push(1);
         
-        let learn_part : usize = 127;
+        let learn_part : usize = 127; //297;
         
        let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
@@ -126,32 +125,31 @@ fn test_water_quality(){
 
        //println!("shuffled ataset = {:?}", ds.get_shuffled());            
         
-       let layers:Vec<usize> = vec!{incols.len(), 6, outcols.len()};
+       let layers:Vec<usize> = vec!{incols.len(), 5, outcols.len()};
        let annstruct = layers.clone();
        let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
        let mut nnet = Neuralnet::new(layers, activations); 
                      
        //println!("In : {:?}", data_in);
-       //println!("Out : {:?}", data_out);
-       
+       //println!("Out : {:?}", data_out);      
        let p_size : usize = 30;
        let k_max : usize = 3000;
        let ub : f64 = 5.0;
        let lb : f64 = -5.0;
 
-       //let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
-       let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+       let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
+       //let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
        // set EO params ----------
-       //eoann.a1 = 2.0; 
-       //eoann.a2 = 1.0;  
-       //eoann.gp = 0.5;
+        eoann.a1 = 2.0; 
+        eoann.a2 = 1.0;  
+        eoann.gp = 0.5;
        //-------------------------
                // set EO params ----------
-       eoann.c1 = 2.0; 
-       eoann.c2 = 2.0;  
-       //eoann.gp = 0.5;
+       //eoann.c1 = 2.0; 
+       //eoann.c2 = 2.0;        
        //-------------------------
-       
+      
+
        let (_a, _wbi, _c) = eoann.learn();
        
        println!("_Learning items count : {:?}",lcount);
@@ -162,15 +160,13 @@ fn test_water_quality(){
        println!("WQ - final Learning error : RMSEl = {:?}", _a );
        
        println!("_"); 
-
-
         {     
-
+            
              //println!("Writing optimization curve ...");
-             //let pathcrv =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_convergenceTrnd.csv");
-             //let head = String::from("RMSE-Cnvergence_Trend");
-             //let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
-             //println!("Writing optimization curve finish.");
+             let pathcrv =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_convergenceTrnd_EO.csv");
+             let head = String::from("RMSE-Cnvergence_Trend_EO");
+             let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
+             println!("Writing optimization curve finish.");
         
              //println!("---------------------TESTING-----------------------"); 
          
@@ -188,7 +184,16 @@ fn test_water_quality(){
 
              println!("WQ - final Learning determination coef. : R2l = {:?}", _r2l);   
              println!("_");   
-         
+             
+             println!("writing learning results .....");
+                  
+             let pathlearn  = String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_learn_results_EO.csv");             
+             let mut headers = Vec::new();
+             headers.push(String::from("Computed CE"));
+             let _error = Dataset::write_to_csv2(&pathlearn, &Some(headers), &computed_learn);
+             println!("Writing learning results ......OK");
+    
+            
              let computed_test = eoann.compute_out_for2(&ds_test.inputs);
 
              let computed = convert2vector(&computed_test);
@@ -199,13 +204,13 @@ fn test_water_quality(){
              let _r2t =   Dataset::compute_determination_r2(&computed, &observed);
              println!("WQ - final Testing determination coef : R2t = {:?}", _r2t);   
             
-             //println!("Writing test results ...");
-             //let pathtest =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_test_results.csv");
-             //let mut headers= Vec::new();
-             //headers.push(String::from("Computed CE"));
-
-             //let _error = Dataset::write_to_csv2(&pathtest, &Some(headers), &comuted_test);
-             //println!("Writing test results finish.");
+             println!("Writing test results ......");
+             let pathtest =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/dataset_test_results_EO.csv");
+             let mut headers= Vec::new();
+             headers.push(String::from("Computed CE-Test"));
+             println!("test elements :  {:?}", computed_test.len());   
+             let _error = Dataset::write_to_csv2(&pathtest, &Some(headers), &computed_test);
+             println!("Writing test results finish ...... OK.");
         
         
         //for rs in result.iter() {
@@ -268,7 +273,7 @@ fn test_water_quality_loop(){
 
    //println!("shuffled ataset = {:?}", ds.get_shuffled());  
   
-     let layers:Vec<usize> = vec!{incols.len(), 5, outcols.len()};
+     let layers:Vec<usize> = vec!{incols.len(), 11, outcols.len()};
      let annstruct = layers.clone();
      hidden_layer=layers[1].clone();
 
