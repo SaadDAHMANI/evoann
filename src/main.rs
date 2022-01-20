@@ -138,7 +138,7 @@ fn test_water_quality(){
        let lb : f64 = -5.0;
 
        // add coment 
-       let x : i32 = 3.256;
+       let x : i32 = 3;
 
        let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
        //let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
