@@ -95,11 +95,12 @@ fn main() {
 fn streamflow_forecast(){
 
     //let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/2Qm1.csv");
-    let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/Coxs2.csv");
+    let path =String::from("/home/sd/Documents/AppDev/Rust/evoann/data/Coxs3.csv");
     
     let mut incols = Vec::new();
     incols.push(2);
     incols.push(3);
+    incols.push(4);
     
     let mut outcols = Vec::new();
     outcols.push(1);
