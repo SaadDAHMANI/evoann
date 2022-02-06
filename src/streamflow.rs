@@ -1,26 +1,36 @@
-
 const POP_SIZE : usize = 50;
-const K_MAX : usize = 3500;
+const K_MAX : usize = 5;
 const LB : f64 = -5.0;
 const UB : f64 = 5.0;
+const HL1 : usize = 5;
 
 pub fn streamflow_forecast_loop(){
     
-    let root = String::from("/home/sd/Documents/AppDev/Rust/evoann/data");
-    //let root = String::from("/home/roua/Documents/Rust/evoann/data");
+    let mut population = Vec::new();
+   population.push(50usize);
+   population.push(80usize);
+   population.push(100usize);
+   population.push(120usize);
+
+
+   for p_size in population.into_iter() {
+
+    println!("///////////////////////////////////////////////////----------POPULATIOON SIZE = {}", p_size);
+
+     //let root = String::from("/home/sd/Documents/AppDev/Rust/evoann/data");
+    let root = String::from("/home/roua/Documents/Rust/evoann/data");
     
     let path = format!("{}/{}", root, "Coxs3.csv"); 
- 
-    
+     
     let mut incols = Vec::new();
     incols.push(2);
-    incols.push(3);
-    incols.push(4);
+   // incols.push(3);
+   // incols.push(4);
     
     let mut outcols = Vec::new();
     outcols.push(1);
     
-    let learn_part : usize = 4868; 
+   let learn_part : usize = 4868; 
     
    let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
@@ -34,29 +44,19 @@ pub fn streamflow_forecast_loop(){
    println!("----------------STREAMFLOW prediction-------------");
 
     //println!("In : {:?}", data_in);
-   //println!("Out : {:?}", data_out);      
-   let p_size : usize = POP_SIZE;
+    //println!("Out : {:?}", data_out);      
+    //let p_size : usize = POP_SIZE;
    let k_max : usize = K_MAX;
    let ub : f64 = UB;
    let lb : f64 = LB;
 
-   let mut hiddenlayer1 = Vec::new();
-   for i in 0..14{
-     hiddenlayer1.push(i+1);
-   } 
-   
-   let chronos = Instant::now();
+    let chronos = Instant::now();
 
-   for j in 0..hiddenlayer1.len(){
-
-   }
-   //println!("shuffled ataset = {:?}", ds.get_shuffled());            
-    
-   let layers:Vec<usize> = vec!{incols.len(), 8, outcols.len()};
+    let layers:Vec<usize> = vec!{incols.len(), HL1, outcols.len()};
    let annstruct = layers.clone();
    let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Linear};
    let mut nnet = Neuralnet::new(layers, activations); 
-                 
+               
    
   //let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
   let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
@@ -83,22 +83,16 @@ pub fn streamflow_forecast_loop(){
    println!("_"); 
     {     
         
-         //println!("Writing optimization curve ...");
-         let pathcrv = format!("{}/{}", root, "Coxs_convergenceTrnd_EO.csv");
+         println!("Writing optimization curve ...");
+         let pathcrv = format!("{}/Psize{}_{}", root, p_size ,"Coxs_convergenceTrnd_EO.csv");
                   
          let head = String::from("Coxs_RMSE-Cnvergence_Trend_EO");
          let _error = Dataset::write_to_csv(&pathcrv, &Some(head), &_c);
          println!("Writing optimization curve finish.");
     
-         //println!("---------------------TESTING-----------------------"); 
+         println!("---------------------TESTING-----------------------"); 
      
-       //println!("Real [Wi] = {:?}", nnet.weights);
-
-        //println!("Real [bi] = {:?}", nnet.biases);
-
-        //println!("_");
-
-         //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
+          //println!("[nnet] -> testing result [Ca], [Mg(]= {:?}) --> {:?}", test, nnet.feed_forward(&test));
          let computed_learn = eoann.compute_out_for2(&ds_learn2.inputs);  
          let computedlearn = convert2vector(&computed_learn);
          let observedlearn = convert2vector(&ds_learn2.outputs);   
@@ -109,9 +103,8 @@ pub fn streamflow_forecast_loop(){
          
          println!("writing learning results .....");
               
-         let pathlearn = format!("{}/{}", root, "Coxs_dataset_learn_results_EO.csv");             
+         let pathlearn = format!("{}/Psize{}_{}", root, p_size, "Coxs_dataset_learn_results_EO.csv");             
                      
-         
          let mut headers = Vec::new();
          headers.push(String::from("Computed CE"));
          let _error = Dataset::write_to_csv2(&pathlearn, &Some(headers), &computed_learn);
@@ -130,8 +123,8 @@ pub fn streamflow_forecast_loop(){
         
          println!("Writing test results ......");
          
-         let pathtest =format!("{}/{}", root, "Coxs_dataset_test_results_EO.csv");
-              
+         let pathtest =format!("{}/Psize{}_{}",root ,p_size , "Coxs_dataset_test_results_EO.csv");
+             
          
          let mut headers= Vec::new();
          headers.push(String::from("Computed CE-Test"));
@@ -148,12 +141,12 @@ pub fn streamflow_forecast_loop(){
     println!("End computation in : {:?}.", duration);
 
     {
-        let _path = format!("{}/{}", root , "Coxs3_inputs.csv");
+        let _path = format!("{}/{}", root, "Coxs3_mis_inputs.csv");
         
         let mut _incols = Vec::new();
         _incols.push(2);
-        _incols.push(3);
-        _incols.push(4);
+        //_incols.push(3);
+        //_incols.push(4);
 
         let mut _outcols = Vec::new();
         _outcols.push(1);
@@ -164,17 +157,15 @@ pub fn streamflow_forecast_loop(){
         let mut _headers= Vec::new();
         _headers.push(String::from("Computed QC"));
 
-        let _path_result = format!("{}/{}", root, "Coxs3_Outputs.csv");
+        let _path_result = format!("{}/Psize{}_{}", root, p_size, "Coxs3_Outputs.csv");
         
         let _error = Dataset::write_to_csv2(&_path_result, &Some(_headers), &_computed);
-         println!("Writing results is finish ...... OK.");
-        
+         println!("Writing results is finish ...... OK.");        
     }
+  }
 
+ }
 }
-
-}
-
 
 pub fn streamflow_forecast(){
     
