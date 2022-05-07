@@ -12,7 +12,7 @@ pub fn streamflow_forecast_loop(){
    let mut all_result : Vec<Vec<f64>> = Vec::new();
 
    let mut population = Vec::new();
-   population.push(5usize);
+   //population.push(5usize);
    population.push(8usize);
    //population.push(100usize);
    //population.push(120usize);
@@ -28,11 +28,11 @@ pub fn streamflow_forecast_loop(){
      
     let mut incols = Vec::new();
     incols.push(2); // model 1
-    //incols.push(3);  // model 2
-   // incols.push(4);   // model 3
-   //incols.push(5);
-   incols.push(6); 
-   incols.push(7);
+    incols.push(3);  // model 2
+    incols.push(4);   // model 3
+    incols.push(5);
+    incols.push(6); 
+    incols.push(7);
    //incols.push(8);
    //incols.push(9);
    //incols.push(10);
@@ -41,7 +41,7 @@ pub fn streamflow_forecast_loop(){
     let mut outcols = Vec::new();
     outcols.push(1);
     
-   let learn_part : usize = 4198; // 4868; (70%, 30%) 
+   let learn_part : usize = 4233; // Total =6047; Test = 1814 (70%, 30%) 
     
    let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
@@ -122,7 +122,6 @@ pub fn streamflow_forecast_loop(){
          headers.push(String::from("Computed CE"));
          let _error = Dataset::write_to_csv2(&pathlearn, &Some(headers), &computed_learn);
          println!("Writing learning results .....: {:?}", _error);
-
         
          let computed_test = eoann.compute_out_for2(&ds_test.inputs);
 
@@ -218,11 +217,14 @@ pub fn streamflow_forecast(){
     incols.push(2);
     incols.push(3);
     incols.push(4);
-    
+    incols.push(5);
+    incols.push(6);
+    incols.push(7);
+
     let mut outcols = Vec::new();
     outcols.push(1);
     
-    let learn_part : usize = 4868; 
+    let learn_part : usize = 4233; //Total = 6047; Test =1814  
     
    let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
@@ -247,7 +249,7 @@ pub fn streamflow_forecast(){
    //println!("In : {:?}", data_in);
    //println!("Out : {:?}", data_out);      
    let p_size : usize = 50;
-   let k_max : usize = 3500;
+   let k_max : usize = 2000;
    let ub : f64 = 5.0;
    let lb : f64 = -5.0;
 
