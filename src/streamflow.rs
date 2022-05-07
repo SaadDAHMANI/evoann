@@ -24,7 +24,7 @@ pub fn streamflow_forecast_loop(){
      let root = main_root.clone(); // String::from("/home/sd/Documents/AppDev/Rust/evoann/data");
     
     
-    let path = format!("{}/{}", root, "Coxs10.csv"); 
+    let path = format!("{}/{}", root, "Coxs_data.csv"); 
      
     let mut incols = Vec::new();
     incols.push(2); // model 1
@@ -212,8 +212,7 @@ pub fn streamflow_forecast(){
     let root = String::from("/home/sd/Documents/AppDev/Rust/evoann/data");
     //let root = String::from("/home/roua/Documents/Rust/evoann/data");
     
-    let path = format!("{}/{}", root, "Coxs10.csv"); 
- 
+    let path = format!("{}/{}", root, "Coxs_data.csv");  
     
     let mut incols = Vec::new();
     incols.push(2);
