@@ -1,41 +1,50 @@
-const POP_SIZE : usize = 5;
-const K_MAX : usize = 1;
+//const POP_SIZE : usize = 5;
+const K_MAX : usize = 2000;
 const LB : f64 = -5.0;
 const UB : f64 = 5.0;
-const HL1 : usize = 5;
+//const HL1 : usize = 10;
 
-pub fn streamflow_forecast_loop(){
+pub fn streamflow_forecast_loop(hl1 : usize){
 
-   let main_root = String::from("/home/sd/Documents/AppDev/Rust/evoann/data");
+   let main_root = String::from("/home/sd/Documents/Rust_apps/evoann/data");
    //let main_root = String::from("/home/roua/Documents/Rust/evoann/data");
 
    let mut all_result : Vec<Vec<f64>> = Vec::new();
 
    let mut population = Vec::new();
-   //population.push(5usize);
-   population.push(8usize);
+   //population.push(50usize);
+   population.push(80usize);
    //population.push(100usize);
    //population.push(120usize);
 
    for p_size in population.into_iter() {
 
-    println!("/////////// HL ={} ----------POPULATIOON SIZE = {}", HL1 , p_size);
+    println!("/////////// HL ={} ----------POPULATIOON SIZE = {}", hl1 , p_size);
 
      let root = main_root.clone(); // String::from("/home/sd/Documents/AppDev/Rust/evoann/data");
-    
-    
+        
     let path = format!("{}/{}", root, "Coxs_data.csv"); 
      
     let mut incols = Vec::new();
-    incols.push(2); // model 1
-    incols.push(3);  // model 2
-    incols.push(4);   // model 3
-    incols.push(5);
-    incols.push(6); 
+    //incols.push(2); // model 1
+    //incols.push(3);  // model 2
+    //incols.push(4);   // model 3
+    //incols.push(5);
+    //incols.push(6); 
     incols.push(7);
-   //incols.push(8);
-   //incols.push(9);
-   //incols.push(10);
+    incols.push(8);
+    //incols.push(9);
+    //incols.push(10);
+    //incols.push(11);
+    incols.push(12); 
+    incols.push(13);
+    //incols.push(14);   // model 3
+    //incols.push(15);
+    //incols.push(16); 
+    //incols.push(17);
+    //incols.push(18);
+    incols.push(19);
+
    //incols.push(11);
 
     let mut outcols = Vec::new();
@@ -45,7 +54,9 @@ pub fn streamflow_forecast_loop(){
     
    let ds0 =  Dataset::read_from_csvfile(&path, &incols, &outcols);
 
-   let (ds_learn, ds_test) = ds0.get_shuffled().split_on_2(learn_part);
+   let (ds_learn, ds_test) = ds0.get_shuffled()
+                               .split_on_2(learn_part);
+
    let lcount = ds_learn.inputs.len();
 
    let ds_learn2 = ds_learn.clone();
@@ -61,15 +72,14 @@ pub fn streamflow_forecast_loop(){
    let ub : f64 = UB;
    let lb : f64 = LB;
 
-   let hl1 = HL1.clone();
+   //let hl1 = HL1.clone();
 
     let chronos = Instant::now();
 
-    let layers:Vec<usize> = vec!{incols.len(), HL1, outcols.len()};
+   let layers:Vec<usize> = vec!{incols.len(), hl1, outcols.len()};
    let annstruct = layers.clone();
-   let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Sigmoid};
-   let mut nnet = Neuralnet::new(layers, activations); 
-               
+   let activations:Vec<Activations> = vec!{Activations::Sigmoid, Activations::Sigmoid, Activations::Sigmoid};
+   let mut nnet = Neuralnet::new(layers, activations);                
    
   let mut eoann = SequentialEOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
   //let mut eoann = SequentialPSOTrainer::new(&mut nnet, ds_learn.inputs, ds_learn.outputs, p_size, k_max, lb, ub);
@@ -79,15 +89,15 @@ pub fn streamflow_forecast_loop(){
      eoann.gp = 0.5;
    //-------------------------
            // set EO params ----------
-    //eoann.c1 = 2.0; 
-    //eoann.c2 = 2.0;        
+   // eoann.c1 = 2.0; 
+    // eoann.c2 = 2.0;        
    //-------------------------
   
 
    let (_a, _wbi, _c) = eoann.learn();
    
    println!("_Learning items count : {:?}",lcount);
-   println!("*Population-size : {},  *ANN-Struct :{:?}, ||->  HL1 = {}", p_size, annstruct, HL1);
+   println!("*Population-size : {},  *ANN-Struct :{:?}, ||->  HL1 = {}", p_size, annstruct, hl1);
 
    println!("_");
    
@@ -193,7 +203,7 @@ pub fn streamflow_forecast_loop(){
 
  }
 
- let path_all =format!("{}/HL_{}_All_results.csv", main_root, HL1);
+ let path_all =format!("{}/HL_{}_All_results.csv", main_root, hl1);
  let mut headers= Vec::new();
          headers.push(String::from("HL"));
          headers.push(String::from("Pop-size"));

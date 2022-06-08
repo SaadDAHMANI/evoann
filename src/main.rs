@@ -19,10 +19,18 @@ fn main() {
     println!("Hello, Evo-ANN!");
         
            //streamflow_forecast();
-           streamflow_forecast_loop();
            //test_water_quality();
            // test_water_quality_loop();           
+           let mut hl1 : usize = 5;
+           streamflow_forecast_loop(hl1);
             
+           hl1 = 10;
+           streamflow_forecast_loop(hl1);
+                       
+           hl1 = 12;
+           streamflow_forecast_loop(hl1);
+           
+
  }
 
 
